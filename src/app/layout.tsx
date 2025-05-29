@@ -33,7 +33,7 @@ export default function RootLayout({
 					color={colorPallete.black}
 					position={'relative'}
 					minHeight={'100vh'}>
-					{/* <Navbar /> */}
+					<Navbar />
 					{children}
 				</Stack>
 			</body>
