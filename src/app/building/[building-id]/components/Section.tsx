@@ -14,6 +14,8 @@ const Section = () => {
 	useEffect(() => {
 		const getData = buildingsDummy.find(b => b.id == Number(buildingId));
 		setBuilding(getData);
+
+		console.log('building', building);
 	}, [buildingId]);
 	return (
 		<Stack
