@@ -45,6 +45,7 @@ const Section = () => {
 					height: '100%', // full height as well
 					overflowY: 'auto',
 				}}>
+				<Typography variant='h3'>{building?.name}</Typography>
 				<Typography variant='h4'>{building?.name}</Typography>
 				<Typography>{building?.description}</Typography>
 			</Stack>
