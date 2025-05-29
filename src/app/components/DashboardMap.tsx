@@ -8,12 +8,12 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
 
-import { colorPallete } from '../utils/colorspallete';
 import { Button, Stack } from '@mui/material';
 import { LegendCard } from './map-component/LegendCard';
 import RouteInfoCard from './map-component/RouteInfoCard';
 import DetailModal from './map-component/DetailModal';
 import { buildingItemType, buildingsDummy } from '../DTO/building';
+import Image from 'next/image';
 
 L.Icon.Default.mergeOptions({
 	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -45,7 +45,7 @@ const RoutingMachine = ({
 	const map = useMap();
 	const routingControlRef = React.useRef<any>(null);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (!from || !to) {
 			if (routingControlRef.current) {
 				routingControlRef.current.remove();
@@ -193,6 +193,18 @@ const DashboardMap = () => {
 							<br />
 							{building.description}
 							<br />
+							{building.image && building.image.length > 0 && (
+								<div style={{ marginTop: 8, width: '100%', height: 150, position: 'relative' }}>
+									<Image
+										src={building.image[0]}
+										alt={`${building.name} image 1`}
+										fill
+										style={{ objectFit: 'cover', borderRadius: 8 }}
+										sizes='(max-width: 600px) 100vw, 600px'
+										priority
+									/>
+								</div>
+							)}
 							<Stack
 								direction='row'
 								gap={1}
