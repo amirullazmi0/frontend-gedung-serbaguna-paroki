@@ -1,15 +1,15 @@
 'use client';
 import React from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
+import { buildingItemType } from '@/app/DTO/building';
 
 interface DetailModalProps {
 	open: boolean;
-	name?: string;
-	description?: string;
 	onClose: () => void;
+	data?: buildingItemType;
 }
 
-const DetailModal: React.FC<DetailModalProps> = ({ open, name, description, onClose }) => {
+const DetailModal: React.FC<DetailModalProps> = ({ open, data, onClose }) => {
 	return (
 		<Dialog
 			open={open}
@@ -25,9 +25,9 @@ const DetailModal: React.FC<DetailModalProps> = ({ open, name, description, onCl
 					maxWidth: 'none',
 				},
 			}}>
-			<DialogTitle>{name}</DialogTitle>
+			<DialogTitle>{data?.name}</DialogTitle>
 			<DialogContent>
-				<DialogContentText>{description}</DialogContentText>
+				<DialogContentText>{data?.description}</DialogContentText>
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={onClose}>Tutup</Button>
