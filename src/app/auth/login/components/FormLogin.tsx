@@ -6,18 +6,14 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { loginSchema } from './loginConfig';
 import { colorPallete } from '@/app/utils/colorspallete';
 import { useRouter } from 'next/navigation';
-
-type LoginFormInputs = {
-	email: string;
-	password: string;
-};
+import { InferType } from 'yup';
 
 const FormLogin = () => {
 	const {
 		control,
 		handleSubmit,
 		formState: { errors, isValid },
-	} = useForm<LoginFormInputs>({
+	} = useForm<InferType<typeof loginSchema>>({
 		resolver: yupResolver(loginSchema),
 		mode: 'onChange',
 		defaultValues: {
@@ -28,7 +24,7 @@ const FormLogin = () => {
 
 	const navigatiom = useRouter();
 
-	const onSubmit = (data: LoginFormInputs) => {
+	const onSubmit = (data: InferType<typeof loginSchema>) => {
 		console.log('Form Data:', data);
 		// Handle login logic here
 	};
