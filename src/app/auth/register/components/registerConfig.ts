@@ -19,5 +19,4 @@ export const registerSchema = yup.object({
     .string()
     .oneOf([yup.ref('password')], 'Konfirmasi Password harus sama dengan Password')
     .required('Konfirmasi Password wajib diisi'),
-
 });
