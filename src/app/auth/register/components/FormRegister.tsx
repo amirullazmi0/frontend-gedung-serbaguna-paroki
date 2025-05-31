@@ -11,12 +11,15 @@ import { InferType } from 'yup';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import PasswordChecklist from '@/app/components/PasswordCheckList';
+import { generatePassword } from '@/app/utils/generatePassword';
 
 const FormRegister = () => {
 	const {
 		control,
 		handleSubmit,
+		setValue,
 		reset,
+		trigger,
 		formState: { errors, isValid },
 	} = useForm<InferType<typeof registerSchema>>({
 		resolver: yupResolver(registerSchema),
@@ -101,8 +104,8 @@ const FormRegister = () => {
 				borderRadius: 8,
 				boxShadow: '0px 0px 20px -5px rgba(0, 0, 0, 0.25)',
 				bgcolor: colorPallete.white,
-				maxWidth: { xs: '100%', sm: '90px' },
-				minWidth: { xs: '90%', sm: '70%' },
+				maxWidth: { xs: '95vw', md: '70vw' },
+				minWidth: { xs: '90vw', md: '40vw' },
 				margin: 'auto',
 				gap: 2,
 				display: 'grid',
@@ -224,23 +227,42 @@ const FormRegister = () => {
 						value={role}
 					/>
 
-					<Button
-						variant='contained'
-						onClick={() => {
-							navigation.push('/auth/register');
-							reset({
-								name: '',
-								email: '',
-								password: '',
-								confirmPassword: '',
-							});
-						}}
-						sx={{
-							gridColumn: { xs: 'span 1', md: 'span 2' },
-							width: 'fit-content',
-						}}>
-						Ubah Role
-					</Button>
+					<Stack
+						flexDirection={'row'}
+						gap={1}>
+						<Button
+							variant='contained'
+							onClick={() => {
+								navigation.push('/auth/register');
+								reset({
+									name: '',
+									email: '',
+									password: '',
+									confirmPassword: '',
+								});
+							}}
+							sx={{
+								gridColumn: { xs: 'span 1', md: 'span 2' },
+								width: 'fit-content',
+							}}>
+							Ubah Role
+						</Button>
+						<Button
+							variant='contained'
+							color='secondary'
+							onClick={() => {
+								const password = generatePassword(14);
+								setValue('password', password);
+								setValue('confirmPassword', password);
+								trigger(['password', 'confirmPassword']);
+							}}
+							sx={{
+								gridColumn: { xs: 'span 1', md: 'span 2' },
+								width: 'fit-content',
+							}}>
+							Generate Password
+						</Button>
+					</Stack>
 
 					<Button
 						type='submit'
