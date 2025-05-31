@@ -13,8 +13,7 @@ export const registerSchema = yup.object({
     .min(8, 'Password harus memiliki minimal 8 karakter')
     .matches(/[A-Z]/, 'Password harus mengandung huruf besar')
     .matches(/[a-z]/, 'Password harus mengandung huruf kecil')
-    .matches(/\d/, 'Password harus mengandung angka')
-    .matches(/[\W_]/, 'Password harus mengandung karakter khusus'),
+    .matches(/\d/, 'Password harus mengandung angka'),
   confirmPassword: yup
     .string()
     .oneOf([yup.ref('password')], 'Konfirmasi Password harus sama dengan Password')
