@@ -39,12 +39,12 @@ const FormLogin = () => {
 				boxShadow: '0px 0px 20px -5px rgba(0, 0, 0, 0.25)',
 				bgcolor: colorPallete.white,
 				maxWidth: {
-					xs: '100%',
-					sm: 400,
+					xs: '95vw',
+					sm: '40vw',
 				},
 				minWidth: {
-					xs: '90%',
-					sm: 400,
+					xs: '90vw',
+					sm: '30vw',
 				},
 				margin: 'auto',
 				gap: 2,
