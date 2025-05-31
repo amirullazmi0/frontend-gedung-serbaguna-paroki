@@ -144,14 +144,14 @@ const DashboardMap = () => {
 				hasRoute={Boolean(destination)}
 			/>
 
-			{routeInfo && destination && (
+			{/* {routeInfo && destination && (
 				<RouteInfoCard
 					distance={routeInfo.totalDistance}
 					time={routeInfo.totalTime}
 					transportMode={transportMode}
 					onChangeTransportMode={setTransportMode}
 				/>
-			)}
+			)} */}
 
 			<MapContainer
 				className='map'
