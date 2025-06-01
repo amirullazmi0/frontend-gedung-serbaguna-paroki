@@ -1,5 +1,5 @@
 import Stack from '@mui/material/Stack';
-import FormNewPassword from '../components/FormNewPassword';
+import FormNewPassword from '../../components/FormNewPassword';
 
 export default function Home() {
 	return (
