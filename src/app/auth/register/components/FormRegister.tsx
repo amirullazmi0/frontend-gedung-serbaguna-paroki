@@ -252,6 +252,8 @@ const FormRegister = () => {
 							color='secondary'
 							onClick={() => {
 								const password = generatePassword(14);
+								setShowPassword(true);
+								setShowConfirmPassword(true);
 								setValue('password', password);
 								setValue('confirmPassword', password);
 								trigger(['password', 'confirmPassword']);
