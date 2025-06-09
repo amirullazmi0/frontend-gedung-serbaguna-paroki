@@ -28,22 +28,48 @@ const FormLogin = () => {
 	});
 
 	const [alertShow, setAlertShow] = useState(false);
-	const [alertMessage, setAlertMessage] = useState('');
+	const [alertMessage, setAlertMessage] = useState<React.ReactNode>('');
 	const [alertType, setAlertType] = useState<AlertType>('success');
-	const timeout = 4000;
-	const { mutateAsync: login, isPending, isSuccess, isError, error } = useLogin();
+	const [showTime, setShowTime] = useState<number>(4000);
+	const { mutateAsync: login, isPending, isSuccess, isError, error, data } = useLogin();
 
 	const navigatiom = useRouter();
 
 	useEffect(() => {
 		if (isSuccess) {
-			setAlertType('success');
-			setAlertMessage('Login Berhasil');
-			setAlertShow(true);
+			if (data.success) {
+				setAlertType('success');
+				setAlertMessage('Login Berhasil');
+				setShowTime(4000);
+				setAlertShow(true);
+				setTimeout(() => {
+					navigatiom.push('/');
+				}, showTime - 1000);
+			} else {
+				if (data.message == 'user not active') {
+					setAlertType('error');
+					setAlertMessage(
+						<Stack
+							gap={1}
+							justifyContent={'center'}
+							alignItems={'center'}>
+							<Typography>Akun anda belum aktif</Typography>
+							<Button
+								variant='contained'
+								onClick={() => navigatiom.push('/auth/activation-request')}
+								sx={{
+									backgroundColor: colorPallete.primary,
+									width: 'fit-content',
+								}}>
+								Aktivasi Sekarang
+							</Button>
+						</Stack>
+					);
+					setShowTime(20000);
+					setAlertShow(true);
+				}
+			}
 			reset();
-			setTimeout(() => {
-				navigatiom.push('/');
-			}, timeout - 1000);
 		}
 
 		if (isError) {
@@ -51,9 +77,10 @@ const FormLogin = () => {
 			const errorData: ErrorData = err.response?.data as ErrorData;
 			setAlertType('error');
 			setAlertMessage(errorData.message || 'Login Failed');
+			setShowTime(4000);
 			setAlertShow(true);
 		}
-	}, [isSuccess, isError, error, reset]);
+	}, [isSuccess, isError, error, reset, data]);
 
 	const onSubmit = async (data: InferType<typeof loginSchema>) => {
 		const formData = { ...data, email: data.email.toLowerCase() };
@@ -85,7 +112,7 @@ const FormLogin = () => {
 				open={alertShow}
 				onClose={() => setAlertShow(false)}
 				message={alertMessage}
-				timeout={timeout}
+				timeout={showTime}
 			/>
 
 			<Typography
