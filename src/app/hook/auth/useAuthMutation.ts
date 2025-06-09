@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { GlobalApiResponse } from '../../utils/globalsApiResponse';
 import { InferType } from 'yup';
-import { activationRequestSchema, activationSchema, loginSchema, registerSchema } from './authConfig';
+import { activationRequestSchema, activationSchema, forgetPasswordSchema, loginSchema, newPasswordSchema, registerSchema } from './authConfig';
 import Cookies from "js-cookie";
 
 interface LoginResponse {
@@ -50,6 +50,14 @@ const activation = async (data: InferType<typeof activationSchema>): Promise<Glo
 
 const activationRequest = async (data: InferType<typeof activationRequestSchema>): Promise<GlobalApiResponse<activationResponse>> => {
   const response = await axiosInstance.post('/auth/activation-token-request', data);
+  return response.data;
+};
+const forgetPassword = async (data: InferType<typeof forgetPasswordSchema>): Promise<GlobalApiResponse<any>> => {
+  const response = await axiosInstance.post('/auth/forget-password', data);
+  return response.data;
+};
+const newPassword = async (data: InferType<typeof newPasswordSchema>): Promise<GlobalApiResponse<any>> => {
+  const response = await axiosInstance.post('/auth/new-password', data);
   return response.data;
 };
 
@@ -102,3 +110,29 @@ export const useActivationRequest = () => {
     },
   });
 };
+
+export const useForgetPassword = () => {
+  return useMutation<GlobalApiResponse<any>, Error, InferType<typeof forgetPasswordSchema>>({
+    mutationFn: forgetPassword,
+    onSuccess: (data) => {
+      console.log('forget password successful:', data);
+    },
+    onError: (error) => {
+      console.error('forget password failed:', error);
+    },
+  });
+};
+
+export const useNewPassword = () => {
+  return useMutation<GlobalApiResponse<any>, Error, InferType<typeof newPasswordSchema>>({
+    mutationFn: newPassword,
+    onSuccess: (data) => {
+      console.log('new password successful:', data);
+    },
+    onError: (error) => {
+      console.error('new password failed:', error);
+    },
+  });
+};
+
+

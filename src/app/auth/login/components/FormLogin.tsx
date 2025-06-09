@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Stack, TextField, Button, Typography } from '@mui/material';
+import { Stack, TextField, Button, Typography, InputAdornment, IconButton } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { colorPallete } from '@/app/utils/colorspallete';
@@ -11,6 +11,8 @@ import { useLogin } from '@/app/hook/auth/useAuthMutation';
 import { loginSchema } from '@/app/hook/auth/authConfig';
 import { AxiosError } from 'axios';
 import { ErrorData } from '@/app/utils/globalsApiResponse';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const FormLogin = () => {
 	const {
@@ -27,13 +29,14 @@ const FormLogin = () => {
 		},
 	});
 
+	const [showPassword, setShowPassword] = useState(false);
 	const [alertShow, setAlertShow] = useState(false);
 	const [alertMessage, setAlertMessage] = useState<React.ReactNode>('');
 	const [alertType, setAlertType] = useState<AlertType>('success');
 	const [showTime, setShowTime] = useState<number>(4000);
 	const { mutateAsync: login, isPending, isSuccess, isError, error, data } = useLogin();
 
-	const navigatiom = useRouter();
+	const navigation = useRouter();
 
 	useEffect(() => {
 		if (isSuccess) {
@@ -43,7 +46,7 @@ const FormLogin = () => {
 				setShowTime(4000);
 				setAlertShow(true);
 				setTimeout(() => {
-					navigatiom.push('/');
+					navigation.push('/');
 				}, showTime - 1000);
 			} else {
 				if (data.message == 'user not active') {
@@ -56,7 +59,7 @@ const FormLogin = () => {
 							<Typography>Akun anda belum aktif</Typography>
 							<Button
 								variant='contained'
-								onClick={() => navigatiom.push('/auth/activation-request')}
+								onClick={() => navigation.push('/auth/activation-request')}
 								sx={{
 									backgroundColor: colorPallete.primary,
 									width: 'fit-content',
@@ -145,10 +148,20 @@ const FormLogin = () => {
 					<TextField
 						{...field}
 						label='Password'
-						type='password'
+						type={showPassword ? 'text' : 'password'}
 						error={!!errors.password}
-						helperText={errors.password?.message}
 						fullWidth
+						InputProps={{
+							endAdornment: (
+								<InputAdornment position='end'>
+									<IconButton
+										onClick={() => setShowPassword(prev => !prev)}
+										edge='end'>
+										{showPassword ? <VisibilityOff /> : <Visibility />}
+									</IconButton>
+								</InputAdornment>
+							),
+						}}
 					/>
 				)}
 			/>
@@ -164,6 +177,7 @@ const FormLogin = () => {
 			<Button
 				variant='text'
 				loading={isPending}
+				onClick={() => navigation.push('/auth/forget-password')}
 				sx={{ padding: 0, margin: 0, width: 'fit-content', textTransform: 'none' }}>
 				<Typography
 					variant='body2'
@@ -186,7 +200,7 @@ const FormLogin = () => {
 					variant='contained'
 					size='small'
 					color='warning'
-					onClick={() => navigatiom.push('/auth/register')}
+					onClick={() => navigation.push('/auth/register')}
 					disableElevation
 					sx={{
 						textTransform: 'none',
@@ -199,7 +213,7 @@ const FormLogin = () => {
 				size='small'
 				color='success'
 				variant='contained'
-				onClick={() => navigatiom.push('/')}
+				onClick={() => navigation.push('/')}
 				disableElevation
 				sx={{
 					textTransform: 'none',

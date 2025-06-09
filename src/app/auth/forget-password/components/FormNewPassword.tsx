@@ -1,20 +1,25 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Stack, TextField, Button, Typography, InputAdornment, IconButton } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { colorPallete } from '@/app/utils/colorspallete';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { InferType } from 'yup';
-import { newPasswordSchema } from './forgetPasswordConfig';
 import PasswordChecklist from '@/app/components/PasswordCheckList';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { generatePassword } from '@/app/utils/generatePassword';
+import { newPasswordSchema } from '@/app/hook/auth/authConfig';
+import { useNewPassword } from '@/app/hook/auth/useAuthMutation';
+import { Alert, AlertType } from '@/app/components/Alert/Alert';
+import { AxiosError } from 'axios';
+import { ErrorData } from '@/app/utils/globalsApiResponse';
 
 const FormNewPassword = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+	const token = useParams()['token-forget-password'] as string;
 
 	const toggleShowPassword = () => setShowPassword(prev => !prev);
 	const toggleShowConfirmPassword = () => setShowConfirmPassword(prev => !prev);
@@ -23,22 +28,64 @@ const FormNewPassword = () => {
 		handleSubmit,
 		setValue,
 		trigger,
+		reset,
 		formState: { errors, isValid },
 	} = useForm<InferType<typeof newPasswordSchema>>({
 		resolver: yupResolver(newPasswordSchema),
 		mode: 'onChange',
 		defaultValues: {
+			token: token,
 			password: '',
 			confirmPassword: '',
 		},
 	});
 
-	const navigatiom = useRouter();
+	const navigation = useRouter();
+	const [alertShow, setAlertShow] = useState(false);
+	const [alertMessage, setAlertMessage] = useState<React.ReactNode>('');
+	const [alertType, setAlertType] = useState<AlertType>('success');
+	const [showTime, setShowTime] = useState<number>(4000);
+	const { mutateAsync: newPassword, isPending, isSuccess, isError, error, data } = useNewPassword();
 
-	const onSubmit = (data: InferType<typeof newPasswordSchema>) => {
-		console.log('Form Data:', data);
-		// Handle login logic here
+	const onSubmit = async (data: InferType<typeof newPasswordSchema>) => {
+		const formData = { ...data };
+		await newPassword(formData);
 	};
+
+	useEffect(() => {
+		if (isSuccess) {
+			if (data.success) {
+				setAlertType('success');
+				setAlertMessage(
+					<>
+						<Stack gap={1}>
+							<Typography textAlign={'center'}>Password berhasil diubah</Typography>
+						</Stack>
+					</>
+				);
+				setShowTime(10000);
+				setAlertShow(true);
+				setTimeout(() => {
+					navigation.push('/auth/login');
+				}, showTime - 1000);
+			} else {
+				setAlertType('error');
+				setAlertMessage(data.message);
+				setShowTime(4000);
+				setAlertShow(true);
+			}
+			reset();
+		}
+
+		if (isError) {
+			const err: AxiosError = error as AxiosError;
+			const errorData: ErrorData = err.response?.data as ErrorData;
+			setAlertType('error');
+			setAlertMessage(errorData.message || 'Terjadi Kesalahan');
+			setShowTime(4000);
+			setAlertShow(true);
+		}
+	}, [isSuccess, isError, error, reset, data]);
 
 	return (
 		<Stack
@@ -60,6 +107,13 @@ const FormNewPassword = () => {
 				margin: 'auto',
 				gap: 5,
 			}}>
+			<Alert
+				type={alertType}
+				open={alertShow}
+				onClose={() => setAlertShow(false)}
+				message={alertMessage}
+				timeout={showTime}
+			/>
 			<Typography
 				variant='h4'
 				fontWeight={600}
@@ -146,6 +200,7 @@ const FormNewPassword = () => {
 			</Stack>
 
 			<Button
+				loading={isPending}
 				sx={{ mt: 5 }}
 				type='submit'
 				variant='contained'
