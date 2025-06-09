@@ -6,12 +6,12 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { colorPallete } from '@/app/utils/colorspallete';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { registerSchema } from './registerConfig';
 import { InferType } from 'yup';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import PasswordChecklist from '@/app/components/PasswordCheckList';
 import { generatePassword } from '@/app/utils/generatePassword';
+import { registerSchema } from '@/app/hook/auth/authConfig';
 
 const FormRegister = () => {
 	const {
