@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { Stack, TextField, Button, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -7,6 +7,7 @@ import { loginSchema } from './loginConfig';
 import { colorPallete } from '@/app/utils/colorspallete';
 import { useRouter } from 'next/navigation';
 import { InferType } from 'yup';
+import { Alert, AlertType } from '@/app/components/Alert/Alert';
 
 const FormLogin = () => {
 	const {
@@ -22,11 +23,18 @@ const FormLogin = () => {
 		},
 	});
 
+	const [alertShow, setAlertShow] = useState(false);
+	const [alertMessage, setAlertMessage] = useState('');
+	const [alertType, setAlertType] = useState<AlertType>('success');
+
 	const navigatiom = useRouter();
 
 	const onSubmit = (data: InferType<typeof loginSchema>) => {
 		console.log('Form Data:', data);
-		// Handle login logic here
+		setAlertType('success');
+		setAlertMessage('Login Berhasil');
+		setAlertShow(true);
+		// navigatiom.push('/dashboard');
 	};
 
 	return (
@@ -49,6 +57,15 @@ const FormLogin = () => {
 				margin: 'auto',
 				gap: 2,
 			}}>
+			<Alert
+				type={alertType}
+				open={alertShow}
+				onClose={() => setAlertShow(false)}
+				message={alertMessage}
+				timeout={10000}
+				// timerShow
+			/>
+
 			<Typography
 				variant='h3'
 				fontWeight={600}
