@@ -40,16 +40,22 @@ const FormActivationRequest = () => {
 				setAlertType('success');
 				setAlertMessage(
 					<>
-						<Stack>
+						<Stack gap={1}>
 							<Typography textAlign={'center'}>Email Aktivasi Berhasil dikirim</Typography>
+							<Typography textAlign={'center'}>Silahkan cek email</Typography>
 						</Stack>
 					</>
 				);
-				setShowTime(4000);
+				setShowTime(10000);
 				setAlertShow(true);
 				setTimeout(() => {
 					navigatiom.push('/auth/login');
 				}, showTime - 1000);
+			} else {
+				setAlertType('error');
+				setAlertMessage(data.message || 'Aktivasi Gagal');
+				setShowTime(4000);
+				setAlertShow(true);
 			}
 			reset();
 		}
