@@ -2,11 +2,13 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { Box, Stack, Typography, LinearProgress } from '@mui/material';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
-interface AlertProps {
-	type: 'success' | 'error';
+export type AlertType = 'success' | 'error';
+
+export interface AlertProps {
+	type: AlertType;
 	title?: string;
 	message?: string;
 	open: boolean;
@@ -86,7 +88,7 @@ export const Alert: React.FC<AlertProps> = ({ type, title, message, open, onClos
 
 	if (!open) return null;
 
-	const Icon = type === 'success' ? CheckCircleOutlineIcon : ErrorOutlineIcon;
+	const Icon = type === 'success' ? DoneOutlineIcon : ErrorOutlineIcon;
 	const color = type === 'success' ? 'green' : 'red';
 	const progress = timeout ? Math.min((elapsedTime / timeout) * 100, 100) : 0;
 
@@ -109,17 +111,23 @@ export const Alert: React.FC<AlertProps> = ({ type, title, message, open, onClos
 					bgcolor: 'white',
 					borderRadius: 2,
 					p: 3,
-					minWidth: 300,
-					maxWidth: 400,
+					minWidth: {
+						xs: '90%',
+						md: '25%',
+					},
+					maxWidth: {
+						xs: '95%',
+						md: '33%',
+					},
 					boxShadow: 4,
 				}}>
 				<Stack
-					direction='row'
+					// direction='row'
 					alignItems='center'
 					gap={1}>
-					<Icon sx={{ color }} />
+					<Icon sx={{ color, fontSize: 100 }} />
 					<Typography
-						variant='subtitle1'
+						variant='h5'
 						fontWeight='bold'
 						color={color}>
 						{title || (type === 'success' ? 'Success' : 'Error')}
@@ -129,6 +137,7 @@ export const Alert: React.FC<AlertProps> = ({ type, title, message, open, onClos
 				{message && (
 					<Typography
 						variant='body2'
+						textAlign={'center'}
 						mt={1}
 						color='text.secondary'>
 						{message}
@@ -152,14 +161,6 @@ export const Alert: React.FC<AlertProps> = ({ type, title, message, open, onClos
 						</Typography>
 					</Box>
 				)}
-
-				<Typography
-					variant='caption'
-					color='text.secondary'
-					display='block'
-					mt={2}>
-					Hold ESC to close
-				</Typography>
 			</Box>
 		</Box>
 	);
