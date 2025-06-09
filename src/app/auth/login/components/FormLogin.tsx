@@ -1,18 +1,22 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Stack, TextField, Button, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { loginSchema } from './loginConfig';
 import { colorPallete } from '@/app/utils/colorspallete';
 import { useRouter } from 'next/navigation';
 import { InferType } from 'yup';
 import { Alert, AlertType } from '@/app/components/Alert/Alert';
+import { useLogin } from '@/app/hook/auth/useAuthMutation';
+import { loginSchema } from '@/app/hook/auth/authConfig';
+import { AxiosError } from 'axios';
+import { ErrorData } from '@/app/utils/globalsApiResponse';
 
 const FormLogin = () => {
 	const {
 		control,
 		handleSubmit,
+		reset,
 		formState: { errors, isValid },
 	} = useForm<InferType<typeof loginSchema>>({
 		resolver: yupResolver(loginSchema),
@@ -26,15 +30,30 @@ const FormLogin = () => {
 	const [alertShow, setAlertShow] = useState(false);
 	const [alertMessage, setAlertMessage] = useState('');
 	const [alertType, setAlertType] = useState<AlertType>('success');
+	const { mutateAsync: login, isPending, isSuccess, isError, error } = useLogin();
 
 	const navigatiom = useRouter();
 
-	const onSubmit = (data: InferType<typeof loginSchema>) => {
-		console.log('Form Data:', data);
-		setAlertType('success');
-		setAlertMessage('Login Berhasil');
-		setAlertShow(true);
-		// navigatiom.push('/dashboard');
+	useEffect(() => {
+		if (isSuccess) {
+			setAlertType('success');
+			setAlertMessage('Login Berhasil');
+			setAlertShow(true);
+			reset();
+		}
+
+		if (isError) {
+			const err: AxiosError = error as AxiosError;
+			const errorData: ErrorData = err.response?.data as ErrorData;
+			setAlertType('error');
+			setAlertMessage(errorData.message || 'Login Failed');
+			setAlertShow(true);
+		}
+	}, [isSuccess, isError, error, reset]);
+
+	const onSubmit = async (data: InferType<typeof loginSchema>) => {
+		const formData = { ...data, email: data.email.toLowerCase() };
+		await login(formData);
 	};
 
 	return (
@@ -62,8 +81,7 @@ const FormLogin = () => {
 				open={alertShow}
 				onClose={() => setAlertShow(false)}
 				message={alertMessage}
-				timeout={10000}
-				// timerShow
+				timeout={5000}
 			/>
 
 			<Typography
@@ -114,6 +132,7 @@ const FormLogin = () => {
 
 			<Button
 				variant='text'
+				loading={isPending}
 				sx={{ padding: 0, margin: 0, width: 'fit-content', textTransform: 'none' }}>
 				<Typography
 					variant='body2'
