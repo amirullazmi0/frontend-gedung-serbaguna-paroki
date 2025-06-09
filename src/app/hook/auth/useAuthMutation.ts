@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { GlobalApiResponse } from '../../utils/globalsApiResponse';
 import { InferType } from 'yup';
-import { loginSchema, registerSchema } from './authConfig';
+import { activationSchema, loginSchema, registerSchema } from './authConfig';
 import Cookies from "js-cookie";
 // Define the expected response type for login and register
 interface LoginResponse {
@@ -19,6 +19,11 @@ interface RegisterResponse {
     username: string;
     email: string;
   };
+}
+
+interface activationResponse {
+  name: string
+  email: string
 }
 
 // Axios instance for API requests
@@ -41,6 +46,11 @@ const register = async (data: InferType<typeof registerSchema>): Promise<GlobalA
   return response.data; // Return the response (e.g., token or user data)
 };
 
+const activation = async (data: InferType<typeof activationSchema>): Promise<GlobalApiResponse<activationResponse>> => {
+  const response = await axiosInstance.post('/auth/activation', data);  // The endpoint might be `/auth/activate`
+  return response.data;  // Assuming the response contains a message or success indicator
+};
+
 // Hook to handle login mutation
 export const useLogin = () => {
   return useMutation<GlobalApiResponse<LoginResponse>, Error, InferType<typeof loginSchema>>({
@@ -55,7 +65,7 @@ export const useLogin = () => {
   });
 };
 
-// Hook to handle register mutation
+
 export const useRegister = () => {
   return useMutation<GlobalApiResponse<RegisterResponse>, Error, InferType<typeof registerSchema>>({
     mutationFn: register,
@@ -66,6 +76,20 @@ export const useRegister = () => {
     onError: (error) => {
       // Handle error (e.g., show an error message)
       console.error('Registration failed:', error);
+    },
+  });
+};
+
+export const useActivation = () => {
+  return useMutation<GlobalApiResponse<activationResponse>, Error, InferType<typeof activationSchema>>({
+    mutationFn: activation,
+    onSuccess: (data) => {
+      console.log('Activation successful:', data);
+      // You might want to handle success here, such as redirecting the user or showing a success message.
+    },
+    onError: (error) => {
+      console.error('Activation failed:', error);
+      // Handle error (e.g., show an error message)
     },
   });
 };
