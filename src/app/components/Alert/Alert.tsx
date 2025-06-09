@@ -10,7 +10,7 @@ export type AlertType = 'success' | 'error';
 export interface AlertProps {
 	type: AlertType;
 	title?: string;
-	message?: string;
+	message?: React.ReactNode;
 	open: boolean;
 	onClose: () => void;
 	timeout?: number;
@@ -109,7 +109,7 @@ export const Alert: React.FC<AlertProps> = ({ type, title, message, open, onClos
 			<Box
 				sx={{
 					bgcolor: 'white',
-					borderRadius: 2,
+					borderRadius: 7,
 					p: 3,
 					minWidth: {
 						xs: '90%',
@@ -136,10 +136,13 @@ export const Alert: React.FC<AlertProps> = ({ type, title, message, open, onClos
 
 				{message && (
 					<Typography
-						variant='body2'
+						variant='body1'
 						textAlign={'center'}
 						mt={1}
-						color='text.secondary'>
+						color='text.secondary'
+						sx={{
+							textTransform: 'capitalize',
+						}}>
 						{message}
 					</Typography>
 				)}
