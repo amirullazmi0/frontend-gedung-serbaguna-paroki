@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Stack, TextField, Button, Typography, IconButton, InputAdornment } from '@mui/material';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, set } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { colorPallete } from '@/app/utils/colorspallete';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -12,6 +12,11 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import PasswordChecklist from '@/app/components/PasswordCheckList';
 import { generatePassword } from '@/app/utils/generatePassword';
 import { registerSchema } from '@/app/hook/auth/authConfig';
+import { useRegister } from '@/app/hook/auth/useAuthMutation';
+import { AxiosError } from 'axios';
+import { ErrorData } from '@/app/utils/globalsApiResponse';
+import { Alert, AlertType } from '@/app/components/Alert/Alert';
+import PhoneInput from '@/app/components/PhoneInput';
 
 const FormRegister = () => {
 	const {
@@ -20,6 +25,7 @@ const FormRegister = () => {
 		setValue,
 		reset,
 		trigger,
+		setError,
 		formState: { errors, isValid },
 	} = useForm<InferType<typeof registerSchema>>({
 		resolver: yupResolver(registerSchema),
@@ -34,13 +40,13 @@ const FormRegister = () => {
 
 	const navigation = useRouter();
 	const searchParams = useSearchParams();
-
 	const role = searchParams.get('role');
 
-	// 👇 Real-time effect for role change
-	useEffect(() => {
-		console.log('role changed to:', role);
-	}, [role]);
+	const [alertShow, setAlertShow] = useState(false);
+	const [alertMessage, setAlertMessage] = useState<React.ReactNode>('');
+	const [alertType, setAlertType] = useState<AlertType>('success');
+	const timeout = 4000;
+	const { mutateAsync: register, isPending, isSuccess, isError, error } = useRegister();
 
 	// 👇 State for show/hide password
 	const [showPassword, setShowPassword] = useState(false);
@@ -49,10 +55,44 @@ const FormRegister = () => {
 	const toggleShowPassword = () => setShowPassword(prev => !prev);
 	const toggleShowConfirmPassword = () => setShowConfirmPassword(prev => !prev);
 
-	const onSubmit = (data: InferType<typeof registerSchema>) => {
-		console.log('Form Data:', data);
-		// Handle register logic here
+	const onSubmit = async (data: InferType<typeof registerSchema>) => {
+		const formData = { ...data, email: data.email.toLowerCase() };
+		await register(formData);
 	};
+
+	useEffect(() => {
+		if (isSuccess) {
+			setAlertType('success');
+			setAlertMessage(
+				<>
+					<Typography>
+						Registrasi berhasil <br /> Silahkan cek email anda untuk aktivasi akun
+					</Typography>
+				</>
+			);
+			setAlertShow(true);
+			reset();
+			setTimeout(() => {
+				navigation.push('/');
+			}, timeout - 1000);
+		}
+
+		if (isError) {
+			const err: AxiosError = error as AxiosError;
+			const errorData: ErrorData = err.response?.data as ErrorData;
+			if (errorData.message == 'email is already registered') {
+				setError('email', { message: 'Email sudah terdaftar' });
+				return;
+			}
+			if (errorData.message == 'phone number is already registered') {
+				setError('phone', { message: 'Nomor whatsapp sudah terdaftar' });
+				return;
+			}
+			setAlertType('error');
+			setAlertMessage(errorData.message || 'Register gagal');
+			setAlertShow(true);
+		}
+	}, [isSuccess, isError, error, reset]);
 
 	const CardPilihRole = () => (
 		<Stack
@@ -81,14 +121,14 @@ const FormRegister = () => {
 					sx={{ textTransform: 'none' }}
 					variant='contained'
 					size='small'
-					onClick={() => navigation.push('/auth/register?role=user')}>
+					onClick={() => navigation.push('/auth/register?role=USER')}>
 					Penyewa
 				</Button>
 				<Button
 					sx={{ textTransform: 'none' }}
 					variant='contained'
 					size='small'
-					onClick={() => navigation.push('/auth/register?role=admin')}>
+					onClick={() => navigation.push('/auth/register?role=ADMIN')}>
 					Penyedia Gedung
 				</Button>
 			</Stack>
@@ -114,7 +154,14 @@ const FormRegister = () => {
 					md: 'repeat(2, 1fr)',
 				},
 			}}>
-			{!role || (role !== 'user' && role !== 'admin') ? (
+			<Alert
+				type={alertType}
+				open={alertShow}
+				onClose={() => setAlertShow(false)}
+				message={alertMessage}
+				timeout={timeout}
+			/>
+			{!role || (role !== 'USER' && role !== 'ADMIN') ? (
 				<CardPilihRole />
 			) : (
 				<>
@@ -130,9 +177,10 @@ const FormRegister = () => {
 							mb: 5,
 						}}>
 						Register <br />
-						<span style={{ color: colorPallete.black }}>{role === 'user' ? 'Penyewa' : 'Penyedia Gedung'}</span>
+						<span style={{ color: colorPallete.black }}>{role === 'USER' ? 'Penyewa' : 'Penyedia Gedung'}</span>
 					</Typography>
 
+					{/* Name Field */}
 					<Controller
 						name='name'
 						control={control}
@@ -147,6 +195,7 @@ const FormRegister = () => {
 						)}
 					/>
 
+					{/* Email Field */}
 					<Controller
 						name='email'
 						control={control}
@@ -162,7 +211,21 @@ const FormRegister = () => {
 						)}
 					/>
 
-					{/* Password with show/hide toggle */}
+					{/* Phone Field */}
+					<Controller
+						name='phone'
+						control={control}
+						render={({ field }) => (
+							<PhoneInput
+								field={field}
+								name='phone'
+								label='Whatsapp'
+								error={errors.phone?.message}
+							/>
+						)}
+					/>
+
+					{/* Password Field */}
 					<Controller
 						name='password'
 						control={control}
@@ -191,7 +254,7 @@ const FormRegister = () => {
 						)}
 					/>
 
-					{/* Confirm Password with show/hide toggle */}
+					{/* Confirm Password Field */}
 					<Controller
 						name='confirmPassword'
 						control={control}
@@ -227,6 +290,7 @@ const FormRegister = () => {
 						value={role}
 					/>
 
+					{/* Buttons */}
 					<Stack
 						flexDirection={'row'}
 						gap={1}>
@@ -276,6 +340,7 @@ const FormRegister = () => {
 				</>
 			)}
 
+			{/* Login Link */}
 			<Stack
 				sx={{
 					gridColumn: { xs: 'span 1', md: 'span 2' },
