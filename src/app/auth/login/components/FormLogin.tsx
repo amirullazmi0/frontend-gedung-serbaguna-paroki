@@ -30,6 +30,7 @@ const FormLogin = () => {
 	const [alertShow, setAlertShow] = useState(false);
 	const [alertMessage, setAlertMessage] = useState('');
 	const [alertType, setAlertType] = useState<AlertType>('success');
+	const timeout = 4000;
 	const { mutateAsync: login, isPending, isSuccess, isError, error } = useLogin();
 
 	const navigatiom = useRouter();
@@ -40,6 +41,9 @@ const FormLogin = () => {
 			setAlertMessage('Login Berhasil');
 			setAlertShow(true);
 			reset();
+			setTimeout(() => {
+				navigatiom.push('/');
+			}, timeout - 1000);
 		}
 
 		if (isError) {
@@ -81,7 +85,7 @@ const FormLogin = () => {
 				open={alertShow}
 				onClose={() => setAlertShow(false)}
 				message={alertMessage}
-				timeout={5000}
+				timeout={timeout}
 			/>
 
 			<Typography
