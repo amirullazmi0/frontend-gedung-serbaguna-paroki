@@ -5,6 +5,7 @@ import { Stack } from '@mui/material';
 import { colorPallete } from './utils/colorspallete';
 import Navbar from './components/Navbar';
 import QueryProvider from './components/QueryProvider';
+import { AuthProvider } from './provider/auth-provider/authProvider';
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -30,14 +31,16 @@ export default function RootLayout({
 		<html lang='en'>
 			<body className={`${geistSans.variable} ${geistMono.variable}`}>
 				<QueryProvider>
-					<Stack
-						bgcolor={colorPallete.white}
-						color={colorPallete.black}
-						position={'relative'}
-						minHeight={'100vh'}>
-						<Navbar />
-						{children}
-					</Stack>
+					<AuthProvider>
+						<Stack
+							bgcolor={colorPallete.white}
+							color={colorPallete.black}
+							position={'relative'}
+							minHeight={'100vh'}>
+							<Navbar />
+							{children}
+						</Stack>
+					</AuthProvider>
 				</QueryProvider>
 			</body>
 		</html>
