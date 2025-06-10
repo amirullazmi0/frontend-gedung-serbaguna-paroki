@@ -14,19 +14,29 @@ export async function middleware(request: NextRequest) {
 
   let auth
   try {
-    auth = await useAuth(request)
+    auth = await useAuth()
   } catch (err) {
-    url.pathname = '/auth/login'
+    url.pathname = '/'
     return NextResponse.redirect(url)
   }
 
   if (!auth.authenticated) {
-    url.pathname = '/auth/login'
+    url.pathname = '/'
     return NextResponse.redirect(url)
   }
 
-  if (pathname.startsWith('/admin') && auth.role !== 'USER') {
-    url.pathname = '/auth/login'
+  if (pathname.startsWith('/admin') && auth.role !== 'ADMIN') {
+    url.pathname = '/'
+    return NextResponse.redirect(url)
+  }
+
+  if (pathname.startsWith('/user') && auth.role !== 'USER') {
+    url.pathname = '/'
+    return NextResponse.redirect(url)
+  }
+
+  if (pathname.startsWith('/super') && auth.role !== 'SUPERADMIN') {
+    url.pathname = '/'
     return NextResponse.redirect(url)
   }
 
@@ -34,5 +44,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/user/:path*', '/super/:path*'],
 }
