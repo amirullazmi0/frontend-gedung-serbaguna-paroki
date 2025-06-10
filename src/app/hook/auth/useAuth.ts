@@ -1,12 +1,14 @@
+'use server'
 import { GlobalApiResponse } from "@/app/utils/globalsApiResponse";
 import axios from "axios";
+import { cookies } from "next/headers";
 import { NextRequest } from "next/server"
 
 export type Role = 'USER' | 'ADMIN' | 'SUPERADMIN'
 
-export const useAuth = async (req: NextRequest) => {
-  const accessToken = req.cookies.get('access-token')?.value || ''
-
+export const useAuth = async () => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('access-token')?.value ?? ''
   const API_URL = process.env.NEXT_PUBLIC_API_URL
 
   if (!accessToken) {
