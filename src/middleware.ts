@@ -2,24 +2,37 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { useAuth } from './app/hook/auth/useAuth'
 
+export async function middleware(request: NextRequest) {
+  const url = request.nextUrl.clone()
+  const pathname = url.pathname
 
-// This function can be marked `async` if using `await` inside
-export function middleware(request: NextRequest) {
-  const accessToken = request.cookies.get('access-token')?.value || ''
-
+  const accessToken = request.cookies.get('access-token')?.value
   if (!accessToken) {
-    return NextResponse.redirect(new URL('/auth/login', request.url))
+    url.pathname = '/auth/login'
+    return NextResponse.redirect(url)
   }
 
-  useAuth(request).then((res) => {
-    if (!res.authenticated) {
-      return NextResponse.redirect(new URL('/auth/login', request.url))
-    }
-    return NextResponse.next()
-  });
+  let auth
+  try {
+    auth = await useAuth(request)
+  } catch (err) {
+    url.pathname = '/auth/login'
+    return NextResponse.redirect(url)
+  }
+
+  if (!auth.authenticated) {
+    url.pathname = '/auth/login'
+    return NextResponse.redirect(url)
+  }
+
+  if (pathname.startsWith('/admin') && auth.role !== 'USER') {
+    url.pathname = '/auth/login'
+    return NextResponse.redirect(url)
+  }
+
+  return NextResponse.next()
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
-  matcher: '/admin/:path*',
+  matcher: ['/admin/:path*'],
 }
