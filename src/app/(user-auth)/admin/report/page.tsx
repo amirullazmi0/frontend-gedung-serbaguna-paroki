@@ -4,7 +4,6 @@ import { colorPallete } from '@/app/utils/colorspallete';
 import { Typography } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { useContext } from 'react';
-import Section from './Section';
 
 export default function Home() {
 	const auth = useContext(authContext);
@@ -20,9 +19,7 @@ export default function Home() {
 				},
 				minHeight: '100svh',
 			}}>
-			<Stack sx={{ gridColumn: { xs: 'span 1', md: 'span 2' }, padding: 1 }}>
-				<Section />
-			</Stack>
+			<Stack sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}></Stack>
 			<Stack
 				sx={{
 					bgcolor: colorPallete['low-blue'],
