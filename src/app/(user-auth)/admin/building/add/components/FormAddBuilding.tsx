@@ -18,6 +18,8 @@ const FormAddBuilding = () => {
 		control,
 		handleSubmit,
 		reset,
+		setValue,
+		trigger,
 		formState: { errors, isValid },
 	} = useForm<InferType<typeof AddItemBuildingRequestSchema>>({
 		resolver: yupResolver(AddItemBuildingRequestSchema),
@@ -115,7 +117,7 @@ const FormAddBuilding = () => {
 					sx={{
 						color: colorPallete.primary,
 					}}>
-					TAMBAH BANGUNAN
+					TAMBAH GEDUNG
 				</Typography>
 			</Stack>
 			<Stack
@@ -125,13 +127,25 @@ const FormAddBuilding = () => {
 					gridTemplateColumns: {
 						xs: 'repeat(1, 1fr)',
 						md: 'repeat(2, 1fr)',
-						lg: 'repeat(3, 1fr)',
+						lg: 'repeat(2, 1fr)',
 					},
 				}}>
-				<Stack></Stack>
 				{isDesktop && (
-					<Stack>
-						<SelectLatLng />
+					<Stack
+						padding={2}
+						gap={1}
+						height={'fit-content'}
+						bgcolor={colorPallete['low-grey']}
+						borderRadius={2}>
+						<Typography>Pilih Lokasi Gedung</Typography>
+						<SelectLatLng
+							onChange={e => {
+								console.log('onChange', e);
+								setValue('address.lat', e.lat.toString());
+								setValue('address.lng', e.lng.toString());
+								trigger(['address.lat', 'address.lng']);
+							}}
+						/>
 					</Stack>
 				)}
 				<Stack
@@ -303,6 +317,36 @@ const FormAddBuilding = () => {
 								/>
 							)}
 						/>
+						<Controller
+							name='address.lat'
+							control={control}
+							render={({ field }) => (
+								<TextField
+									{...field}
+									label='lat'
+									defaultValue={'0'}
+									disabled
+									variant='outlined'
+									error={!!errors.address?.lat}
+									helperText={errors.address?.lat?.message}
+								/>
+							)}
+						/>
+						<Controller
+							name='address.lng'
+							control={control}
+							render={({ field }) => (
+								<TextField
+									{...field}
+									label='lng'
+									disabled
+									defaultValue={'0'}
+									variant='outlined'
+									error={!!errors.address?.lng}
+									helperText={errors.address?.lng?.message}
+								/>
+							)}
+						/>
 					</Stack>
 
 					{/* Photo Field */}
@@ -327,6 +371,7 @@ const FormAddBuilding = () => {
 						type='submit'
 						variant='contained'
 						color='primary'
+						disabled={!isValid}
 						sx={{ mt: 2 }}>
 						Submit
 					</Button>
