@@ -73,7 +73,7 @@ const FormRegister = () => {
 			setAlertShow(true);
 			reset();
 			setTimeout(() => {
-				navigation.push('/');
+				navigation.push('/auth/login');
 			}, timeout - 1000);
 		}
 
@@ -181,19 +181,6 @@ const FormRegister = () => {
 					</Typography>
 
 					{/* Name Field */}
-					<Controller
-						name='name'
-						control={control}
-						render={({ field }) => (
-							<TextField
-								{...field}
-								label='Nama'
-								error={!!errors.name}
-								helperText={errors.name?.message}
-								fullWidth
-							/>
-						)}
-					/>
 
 					{/* Email Field */}
 					<Controller
@@ -332,6 +319,7 @@ const FormRegister = () => {
 
 					<Button
 						type='submit'
+						loading={isPending}
 						variant='contained'
 						disabled={!isValid}
 						sx={{ gridColumn: { xs: 'span 1', md: 'span 2' }, mt: 5 }}>
