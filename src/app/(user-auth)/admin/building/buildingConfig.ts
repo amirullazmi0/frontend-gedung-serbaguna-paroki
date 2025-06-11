@@ -10,10 +10,10 @@ export const AddressSchema = yup.object({
   provinsi: yup.string().required('Provinsi is required'),
   kodepos: yup.string().required('Kodepos is required'),
   lat: yup.string()
-    .required('Latitude is required')
+    .required('Latitude is required, select on map')
     .matches(/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)/, 'Invalid latitude format'),
   lng: yup.string()
-    .required('Longitude is required')
+    .required('Longitude is required, select on map')
     .matches(/^[-+]?((1[0-7]\d(\.\d+)?)|([1-9]?\d(\.\d+)?))$/, 'Invalid longitude format'),
 });
 
