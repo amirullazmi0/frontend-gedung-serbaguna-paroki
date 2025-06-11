@@ -168,6 +168,7 @@ const FormLogin = () => {
 
 			<Button
 				type='submit'
+				loading={isPending}
 				variant='contained'
 				disabled={!isValid}
 				fullWidth>
