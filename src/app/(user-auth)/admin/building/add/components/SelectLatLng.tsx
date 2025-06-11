@@ -1,12 +1,10 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { LatLngExpression } from 'leaflet';
+import React, { useRef, useState } from 'react';
 import L from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import 'leaflet-routing-machine';
-import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
-import './leaflet.css';
+import { LatLng, LatLngExpression } from 'leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvent, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import './leaflet.css'; // Assuming you have your custom CSS for the map
 
 L.Icon.Default.mergeOptions({
 	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -14,9 +12,18 @@ L.Icon.Default.mergeOptions({
 	shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
-const SelectLatLng = () => {
+export interface latLngProps {
+	lat: number;
+	lng: number;
+}
+
+interface Props {
+	onChange: (e: LatLng) => void; // Pass a LatLng object to the parent component
+}
+
+const SelectLatLng = ({ onChange }: Props) => {
+	const mapRef = useRef(null);
 	const [API_KEY] = useState('YGBPAuY7utv2Y7SgHp2N');
-	const defaultPosition: LatLngExpression = [-0.021549253076259666, 109.3358068951819];
 	const layer = [
 		{ name: 'Standar', kode: 'https://api.maptiler.com/maps/basic-v2/{z}/{x}/{y}@2x.png?key=' + API_KEY },
 		{ name: 'osm', kode: 'https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=' + API_KEY },
@@ -24,39 +31,43 @@ const SelectLatLng = () => {
 	];
 
 	const [tile, setTile] = useState(layer[0].kode);
-	const [userPosition, setUserPosition] = useState<LatLngExpression | null>(null);
-	const [selectedMarker, setSelectedMarker] = useState<null | { position: LatLngExpression; name: string; description: string }>(null);
+	const [markerPosition, setMarkerPosition] = useState<LatLngExpression>([-0.021549253076259666, 109.3358068951819]);
 
-	const updateUserLocation = () => {
-		if (!navigator.geolocation) {
-			alert('Geolocation tidak didukung oleh browser ini.');
-			return;
-		}
-		navigator.geolocation.getCurrentPosition(
-			pos => setUserPosition([pos.coords.latitude, pos.coords.longitude]),
-			err => alert(`Gagal mendapatkan lokasi: ${err.message}`),
-			{ enableHighAccuracy: true }
-		);
-	};
+	function OnCLickMap() {
+		const map = useMapEvents({
+			click: () => {
+				map.locate();
+			},
+			preclick: e => {
+				console.log('location found:', e.latlng);
+				setMarkerPosition([e.latlng.lat, e.latlng.lng]);
+				map.flyTo(e.latlng, 13);
 
-	React.useEffect(() => {
-		updateUserLocation();
-	}, []);
+				onChange(e.latlng);
+			},
+		});
+		return null;
+	}
 
 	return (
-		<>
-			<MapContainer
-				className='map'
-				center={selectedMarker ? selectedMarker.position : userPosition || defaultPosition}
-				minZoom={6}
-				zoom={13}
-				style={{ height: '100vh' }}>
-				<TileLayer
-					url={tile}
-					attribution='&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-				/>
-			</MapContainer>
-		</>
+		<MapContainer
+			className='map'
+			ref={mapRef}
+			center={markerPosition}
+			minZoom={6}
+			zoom={13}
+			style={{ height: '100vh' }}>
+			<OnCLickMap />
+			<TileLayer
+				url={tile}
+				attribution="&copy; <a href='https://www.maptiler.com/copyright/'>MapTiler</a> &copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap contributors</a>"
+			/>
+
+			{/* Add Marker at the clicked position */}
+			<Marker position={markerPosition}>
+				<Popup>Lokasi Kamu</Popup>
+			</Marker>
+		</MapContainer>
 	);
 };
 
