@@ -46,7 +46,10 @@ const FormLogin = () => {
 				setShowTime(4000);
 				setAlertShow(true);
 				setTimeout(() => {
-					navigation.push('/');
+					if (data.data?.role) {
+						const role = data.data?.role.toLowerCase();
+						navigation.push(`/${role}`);
+					}
 				}, showTime - 1000);
 			} else {
 				if (data.message == 'user not active') {
