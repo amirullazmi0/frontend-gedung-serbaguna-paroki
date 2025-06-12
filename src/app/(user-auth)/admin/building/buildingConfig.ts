@@ -1,40 +1,38 @@
 import * as yup from 'yup';
 
 export const AddressSchema = yup.object({
-  jalan: yup.string().required('Jalan is required'),
-  rt: yup.string().required('RT is required'),
-  rw: yup.string().required('RW is required'),
-  kelurahan: yup.string().required('Kelurahan is required'),
-  kecamatan: yup.string().required('Kecamatan is required'),
-  kota: yup.string().required('Kota is required'),
-  provinsi: yup.string().required('Provinsi is required'),
-  kodepos: yup.string().required('Kodepos is required'),
+  jalan: yup.string().required('Jalan wajib diisi'),
+  rt: yup.string().required('RT wajib diisi'),
+  rw: yup.string().required('RW wajib diisi'),
+  kelurahan: yup.string().required('Kelurahan wajib diisi'),
+  kecamatan: yup.string().required('Kecamatan wajib diisi'),
+  kota: yup.string().required('Kota wajib diisi'),
+  provinsi: yup.string().required('Provinsi wajib diisi'),
+  kodepos: yup.string().required('Kodepos wajib diisi'),
   lat: yup.string()
-    .required('Latitude is required, select on map')
-    .matches(/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)/, 'Invalid latitude format'),
+    .required('Latitude wajib diisi, pilih di peta')
+    .matches(/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)/, 'Format latitude tidak valid'),
   lng: yup.string()
-    .required('Longitude is required, select on map')
-    .matches(/^[-+]?((1[0-7]\d(\.\d+)?)|([1-9]?\d(\.\d+)?))$/, 'Invalid longitude format'),
+    .required('Longitude wajib diisi, pilih di peta')
+    .matches(/^[-+]?((1[0-7]\d(\.\d+)?)|([1-9]?\d(\.\d+)?))$/, 'Format longitude tidak valid'),
 });
 
 export const PhotoSchema = yup.object({
-  url: yup.string().required('URL is required'),
+  url: yup.string().required('URL wajib diisi'),
 });
 
 export const SupportDocumentRequirementSchema = yup.object({
-  name: yup.string().required('Name is required'),
-  templateDocumentUrl: yup.string().url('Invalid URL format').notRequired(),
+  name: yup.string().required('Nama wajib diisi'),
+  templateDocumentUrl: yup.string().url('Format URL tidak valid').notRequired(), // Optional, no change needed
 });
 
 export const AddItemBuildingRequestSchema = yup.object({
-  name: yup.string().required('Name is required'),
-  price: yup.number().required('Price is required'),
-  description: yup.string().required('Description is required'),
+  name: yup.string().required('Nama wajib diisi'),
+  price: yup.number().required('Harga wajib diisi'),
+  description: yup.string().default(''), // Make description nullable
   address: AddressSchema,
-  photo: yup.array().of(PhotoSchema).required('Photo is required'),
+  photo: yup.array().of(PhotoSchema).required('Foto wajib diisi'),
   supportDocumentRequirement: yup.array()
     .of(SupportDocumentRequirementSchema)
-    .required('Support document requirements are required'),
+    .default([]),
 });
-
-
