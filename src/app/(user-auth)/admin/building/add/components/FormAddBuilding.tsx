@@ -12,6 +12,8 @@ import { AxiosError } from 'axios';
 import { ErrorData } from '@/app/utils/globalsApiResponse';
 import { AddItemBuildingRequestSchema } from '../../buildingConfig';
 import SelectLatLng from './SelectLatLng';
+import FormPhoto from '@/app/components/form-photo/FormPhoto';
+import FormSelectPhoto from './FormSelectPhoto';
 
 const FormAddBuilding = () => {
 	const {
@@ -20,6 +22,7 @@ const FormAddBuilding = () => {
 		reset,
 		setValue,
 		trigger,
+		watch,
 		formState: { errors, isValid },
 	} = useForm<InferType<typeof AddItemBuildingRequestSchema>>({
 		resolver: yupResolver(AddItemBuildingRequestSchema),
@@ -39,9 +42,8 @@ const FormAddBuilding = () => {
 	const isDesktop = useMediaQuery(theme.breakpoints.up('lg')) && !isMobile;
 
 	useEffect(() => {
-		console.log('isMobile', isMobile);
-		console.log('isDesktop', isDesktop);
-	}, [isMobile, isDesktop]);
+		console.log(watch('photo'));
+	}, [watch('photo')]);
 
 	useEffect(() => {
 		if (isSuccess) {
@@ -350,20 +352,12 @@ const FormAddBuilding = () => {
 					</Stack>
 
 					{/* Photo Field */}
-					<Controller
-						name='photo'
-						control={control}
-						render={({ field }) => (
-							<TextField
-								{...field}
-								label='URL Foto'
-								variant='outlined'
-								error={!!errors.photo}
-								helperText={errors.photo?.message}
-								multiline
-								rows={2}
-							/>
-						)}
+
+					<FormSelectPhoto
+						onChange={e => {
+							setValue('photo', e);
+							trigger('photo');
+						}}
 					/>
 
 					{/* Submit Button */}
