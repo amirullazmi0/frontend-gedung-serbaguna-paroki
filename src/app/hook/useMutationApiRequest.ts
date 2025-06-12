@@ -1,13 +1,12 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { allMutations } from '../data-services/mutations';
 import { AllQueriesKeys } from '../data-services/queries';
 
-
-type MutationApiRequestProps<T> = {
+type MutationApiRequestProps<T, V> = {
   key: keyof typeof allMutations; // Ensure key is one of the keys in allMutations
-  params?: any;
+  params?: any;  // Optional parameters, could be for URL params or request body
   authRequired?: boolean;  // Whether the request requires authentication
   options?: {
     onSuccess?: () => void;
@@ -18,7 +17,8 @@ type MutationApiRequestProps<T> = {
 
 // Axios instance for API requests
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL, // Your API base URL
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`
+  , // Your API base URL
   headers: {
     'Content-Type': 'application/json',
   },
@@ -29,28 +29,28 @@ const getAuthToken = () => {
   return Cookies.get('access-token'); // Assuming the token is stored in cookies under 'access-token'
 };
 
-const useMutationApiRequest = <T>({
+const useMutationApiRequest = <T, V>({
   key,
   params,
   authRequired = false,
   options,
-}: MutationApiRequestProps<T>) => {
+}: MutationApiRequestProps<T, V>) => {
   // Fetch the mutation configuration based on the key
   const mutationConfig = allMutations[key]; // Dynamically get mutation config from allMutations
 
   // Mutation function
-  const mutationFn = async (data: any) => {
+  const mutationFn = async (data: V) => {
     // Create the config for Axios, including Authorization header if needed
     const config = authRequired
       ? {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': data instanceof FormData ? 'multipart/form-data' : 'application/json',
           Authorization: `Bearer ${getAuthToken()}`, // Add token if authRequired is true
         },
       }
       : {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': data instanceof FormData ? 'multipart/form-data' : 'application/json',
         },
       };
 
@@ -64,7 +64,7 @@ const useMutationApiRequest = <T>({
     return response.data;
   };
 
-  return useMutation<T>({
+  return useMutation<T, Error, V, unknown>({
     mutationFn,
     onSuccess: (data) => {
       // Handle success
@@ -74,7 +74,6 @@ const useMutationApiRequest = <T>({
 
       // Optionally refetch queries after successful mutation
       if (mutationConfig.refetchQueries) {
-        // Define the correct type for queryKey
         mutationConfig.refetchQueries.forEach((queryKey: AllQueriesKeys) => {
           console.log('Refetching query:', queryKey);
           // You can use queryClient to refetch or invalidate queries
