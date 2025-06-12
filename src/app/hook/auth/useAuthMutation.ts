@@ -4,11 +4,13 @@ import { GlobalApiResponse } from '../../utils/globalsApiResponse';
 import { InferType } from 'yup';
 import { activationRequestSchema, activationSchema, forgetPasswordSchema, loginSchema, newPasswordSchema, registerSchema } from './authConfig';
 import Cookies from "js-cookie";
+import { Role } from './useAuth';
 
 interface LoginResponse {
   accessToken: string;
   email: string;
   id: string;
+  role: Role;
   username: string;
 }
 
