@@ -181,6 +181,20 @@ const FormRegister = () => {
 					</Typography>
 
 					{/* Name Field */}
+					<Controller
+						name='name'
+						control={control}
+						render={({ field }) => (
+							<TextField
+								{...field}
+								label='name'
+								type='text'
+								error={!!errors.name}
+								helperText={errors.name?.message}
+								fullWidth
+							/>
+						)}
+					/>
 
 					{/* Email Field */}
 					<Controller
