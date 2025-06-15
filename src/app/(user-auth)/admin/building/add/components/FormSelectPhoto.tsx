@@ -4,26 +4,26 @@ import { Close } from '@mui/icons-material';
 import Image from 'next/image';
 import useMutationApiRequest from '@/app/hook/useMutationApiRequest';
 import { GlobalApiResponse } from '@/app/utils/globalsApiResponse';
+import { useFormContext } from 'react-hook-form';
+import { InferType } from 'yup';
+import { AddItemBuildingRequestSchema } from '../../buildingConfig';
+import { colorPallete } from '@/app/utils/colorspallete';
 
 interface FormSelectPhotoProps {
 	url: string;
 	loading: boolean;
 }
 
-interface Props {
-	onChange: (e: { url: string }[]) => void; // Accept only the array of objects with `url` property
-}
-const FormSelectPhoto: React.FC<Props> = ({ onChange }) => {
+const FormSelectPhoto = () => {
 	const [images, setImages] = useState<FormSelectPhotoProps[]>([]);
 	const [uploading, setUploading] = useState(false); // State for upload status
-	const {
-		mutateAsync: saveImage,
-		isPending,
-		data,
-	} = useMutationApiRequest<GlobalApiResponse<{ url: string }>, FormData>({
+	const { mutateAsync: saveImage } = useMutationApiRequest<GlobalApiResponse<{ url: string }>, FormData>({
 		key: 'post-building-photo',
 		authRequired: true,
 	});
+
+	const form = useFormContext<InferType<typeof AddItemBuildingRequestSchema>>();
+	const { setValue, watch } = form;
 
 	const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		const files = event.target.files;
@@ -66,7 +66,10 @@ const FormSelectPhoto: React.FC<Props> = ({ onChange }) => {
 			}
 
 			setUploading(false);
-			onChange(newImages.map(image => ({ url: image.url })));
+			setValue(
+				'photo',
+				newImages.map(image => ({ url: image.url }))
+			);
 		}
 	};
 
@@ -89,7 +92,7 @@ const FormSelectPhoto: React.FC<Props> = ({ onChange }) => {
 						color='inherit'
 					/>
 				) : (
-					'Upload Images'
+					'Tambah Foto'
 				)}
 				<input
 					type='file'
@@ -157,12 +160,13 @@ const FormSelectPhoto: React.FC<Props> = ({ onChange }) => {
 					</Box>
 				))}
 			</Stack>
-
-			{isPending && (
+			{watch('photo') ? (
+				<Typography></Typography>
+			) : (
 				<Typography
-					variant='body2'
-					color='textSecondary'>
-					Uploading...
+					color={colorPallete.error}
+					fontSize={'10px'}>
+					*Foto gedung tidak boleh kosong
 				</Typography>
 			)}
 		</Stack>
