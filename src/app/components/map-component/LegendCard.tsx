@@ -36,12 +36,12 @@ export const LegendCard: React.FC<LegendCardProps> = ({ layers, selectedTile, on
 				);
 			})}
 
-			<Button
+			{/* <Button
 				variant='contained'
 				onClick={onUpdateUserLocation}
 				sx={{ mt: 2 }}>
 				Lokasi Saya Sekarang
-			</Button>
+			</Button> */}
 
 			{hasRoute && (
 				<Button
