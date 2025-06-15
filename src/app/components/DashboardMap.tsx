@@ -12,8 +12,11 @@ import { Button, Stack } from '@mui/material';
 import { LegendCard } from './map-component/LegendCard';
 import RouteInfoCard from './map-component/RouteInfoCard';
 import DetailModal from './map-component/DetailModal';
-import { buildingItemType, buildingsDummy } from '../DTO/building';
+
 import Image from 'next/image';
+import { BuildingItemType } from '../DTO/building';
+import useQueryApiRequest from '../hook/useQueryApiRequest';
+import { GlobalApiResponse } from '../utils/globalsApiResponse';
 
 L.Icon.Default.mergeOptions({
 	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -112,21 +115,25 @@ const DashboardMap = () => {
 	const [transportMode, setTransportMode] = useState<'car' | 'foot' | 'bike'>('car');
 	const [openDetailModal, setOpenDetailModal] = useState(false);
 
-	const [detailMarker, setDetailMarker] = useState<buildingItemType>();
+	const [detailMarker, setDetailMarker] = useState<BuildingItemType>();
+	const { data } = useQueryApiRequest<GlobalApiResponse<BuildingItemType[]>>({
+		key: 'get-building',
+		withAuth: false,
+	});
 
 	const updateUserLocation = () => {
-		if (!navigator.geolocation) {
-			alert('Geolocation tidak didukung oleh browser ini.');
-			return;
-		}
-		navigator.geolocation.getCurrentPosition(
-			pos => setUserPosition([pos.coords.latitude, pos.coords.longitude]),
-			err => alert(`Gagal mendapatkan lokasi: ${err.message}`),
-			{ enableHighAccuracy: true }
-		);
+		// if (!navigator.geolocation) {
+		// 	alert('Geolocation tidak didukung oleh browser ini.');
+		// 	return;data, isLoading, error
+		// }
+		// navigator.geolocation.getCurrentPosition(
+		// 	pos => setUserPosition([pos.coords.latitude, pos.coords.buildingAddress.lng]),
+		// 	err => alert(`Gagal mendapatkan lokasi: ${err.message}`),
+		// 	{ enableHighAccuracy: true }
+		// );
 	};
 
-	React.useEffect(() => {
+	useEffect(() => {
 		updateUserLocation();
 	}, []);
 
@@ -174,61 +181,67 @@ const DashboardMap = () => {
 					</Marker>
 				)}
 
-				{buildingsDummy.map(building => (
-					<Marker
-						key={building.id}
-						position={[building.latitude, building.longitude]}
-						eventHandlers={{
-							click: () => {
-								setSelectedMarker({
-									position: [building.latitude, building.longitude],
-									name: building.name,
-									description: building.description,
-								});
-								// setDestination(null); // optional sesuai kebutuhan
-							},
-						}}>
-						<Popup>
-							<strong>{building.name}</strong>
-							<br />
-							{building.description}
-							<br />
-							{building.image && building.image.length > 0 && (
-								<div style={{ marginTop: 8, width: '100%', height: 150, position: 'relative' }}>
-									<Image
-										src={building.image[0]}
-										alt={`${building.name} image 1`}
-										fill
-										style={{ objectFit: 'cover', borderRadius: 8 }}
-										sizes='(max-width: 600px) 100vw, 600px'
-										priority
-									/>
-								</div>
-							)}
-							<Stack
-								direction='row'
-								gap={1}
-								mt={1}>
-								<Button
-									variant='contained'
-									size='small'
-									onClick={() => setDestination([building.latitude, building.longitude])}>
-									Tampilkan Rute
-								</Button>
-								<Button
-									variant='contained'
-									color='success'
-									size='small'
-									onClick={() => {
-										setDetailMarker(building);
-										setOpenDetailModal(true);
-									}}>
-									Detail
-								</Button>
-							</Stack>
-						</Popup>
-					</Marker>
-				))}
+				{data &&
+					data.data &&
+					data.data.map(building => {
+						console.log(`Building ${building.id} :`, building);
+
+						return (
+							<Marker
+								key={building.id}
+								position={[Number(building.buildingAddress[0].lat), Number(building.buildingAddress[0].lng)]}
+								eventHandlers={{
+									click: () => {
+										setSelectedMarker({
+											position: [Number(building.buildingAddress[0].lat), Number(building.buildingAddress[0].lng)],
+											name: building.name,
+											description: building.description,
+										});
+										// setDestination(null); // optional sesuai kebutuhan
+									},
+								}}>
+								<Popup>
+									<strong>{building.name}</strong>
+									<br />
+									{building.description}
+									<br />
+									{building.buildingPhoto && building.buildingPhoto.length > 0 && (
+										<div style={{ marginTop: 8, width: '100%', height: 150, position: 'relative' }}>
+											<Image
+												src={building.buildingPhoto[0].url}
+												alt={`${building.name} image 1`}
+												fill
+												style={{ objectFit: 'cover', borderRadius: 8 }}
+												sizes='(max-width: 600px) 100vw, 600px'
+												priority
+											/>
+										</div>
+									)}
+									<Stack
+										direction='row'
+										gap={1}
+										mt={1}>
+										<Button
+											variant='contained'
+											size='small'
+											onClick={() => setDestination([Number(building.buildingAddress[0].lat), Number(building.buildingAddress[0].lng)])}>
+											Tampilkan Rute
+										</Button>
+										<Button
+											variant='contained'
+											color='success'
+											size='small'
+											onClick={() => {
+												setDetailMarker(building);
+												setOpenDetailModal(true);
+											}}>
+											Detail
+										</Button>
+									</Stack>
+								</Popup>
+							</Marker>
+						);
+					})}
 
 				<RoutingMachine
 					from={userPosition}
