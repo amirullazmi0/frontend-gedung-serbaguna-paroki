@@ -7,8 +7,6 @@ import { useContext } from 'react';
 
 export default function Home() {
 	const auth = useContext(authContext);
-	console.log('auth', auth);
-
 	return (
 		<Stack
 			sx={{
