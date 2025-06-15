@@ -23,7 +23,7 @@ export const PhotoSchema = yup.object({
 
 export const SupportDocumentRequirementSchema = yup.object({
   name: yup.string().required('Nama wajib diisi'),
-  templateDocumentUrl: yup.string().url('Format URL tidak valid').notRequired(), // Optional, no change needed
+  templateDocumentUrl: yup.string().url('Format URL tidak valid').required('File wajib diupload'),
 });
 
 export const AddItemBuildingRequestSchema = yup.object({
