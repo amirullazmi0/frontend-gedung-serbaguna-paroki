@@ -5,29 +5,23 @@ import { allMutations } from '../data-services/mutations';
 import { AllQueriesKeys } from '../data-services/queries';
 
 type MutationApiRequestProps<T, V> = {
-  key: keyof typeof allMutations; // Ensure key is one of the keys in allMutations
-  params?: any;  // Optional parameters, could be for URL params or request body
-  authRequired?: boolean;  // Whether the request requires authentication
+  key: keyof typeof allMutations;
+  params?: any;
+  authRequired?: boolean;
   options?: {
-    onSuccess?: () => void;
-    onError?: () => void;
+    onSuccess?: (data?: T) => void;
+    onError?: (error?: Error) => void;
     onSettled?: () => void;
   };
 };
 
-// Axios instance for API requests
+// Create Axios instance
 const axiosInstance = axios.create({
-  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`
-  , // Your API base URL
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
 });
 
-// Function to retrieve the token from cookies
-const getAuthToken = () => {
-  return Cookies.get('access-token'); // Assuming the token is stored in cookies under 'access-token'
-};
+// Get token from cookies
+const getAuthToken = () => Cookies.get('access-token');
 
 const useMutationApiRequest = <T, V>({
   key,
@@ -35,63 +29,52 @@ const useMutationApiRequest = <T, V>({
   authRequired = false,
   options,
 }: MutationApiRequestProps<T, V>) => {
-  // Fetch the mutation configuration based on the key
-  const mutationConfig = allMutations[key]; // Dynamically get mutation config from allMutations
+  const mutationConfig = allMutations[key];
 
-  // Mutation function
-  const mutationFn = async (data: V) => {
-    // Create the config for Axios, including Authorization header if needed
-    const config = authRequired
-      ? {
-        headers: {
-          'Content-Type': data instanceof FormData ? 'multipart/form-data' : 'application/json',
-          Authorization: `Bearer ${getAuthToken()}`, // Add token if authRequired is true
-        },
+  const mutationFn = async (data: V): Promise<T> => {
+    const isFormData = data instanceof FormData;
+
+    // Conditionally build headers
+    const headers: Record<string, string> = {};
+    if (isFormData) {
+      headers['Content-Type'] = 'multipart/form-data';
+    }
+    if (authRequired) {
+      const token = getAuthToken();
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
       }
-      : {
-        headers: {
-          'Content-Type': data instanceof FormData ? 'multipart/form-data' : 'application/json',
-        },
-      };
+    }
 
     const response = await axiosInstance({
-      url: mutationConfig.url,  // Use the URL from the mutation config
-      method: mutationConfig.method,  // Use the HTTP method (POST, PUT, etc.)
-      data,  // Send the data for POST/PUT requests
-      ...config,  // Merge custom config with Axios defaults
+      url: mutationConfig.url,
+      method: mutationConfig.method,
+      data,
+      headers, // Let Axios handle JSON if not FormData
+      params, // optional query params
     });
 
     return response.data;
   };
 
-  return useMutation<T, Error, V, unknown>({
+  return useMutation<T, Error, V>({
     mutationFn,
     onSuccess: (data) => {
-      // Handle success
-      if (options?.onSuccess) {
-        options.onSuccess();
-      }
+      if (options?.onSuccess) options.onSuccess(data);
 
-      // Optionally refetch queries after successful mutation
       if (mutationConfig.refetchQueries) {
         mutationConfig.refetchQueries.forEach((queryKey: AllQueriesKeys) => {
           console.log('Refetching query:', queryKey);
-          // You can use queryClient to refetch or invalidate queries
+          // Optionally refetch queries using queryClient
         });
       }
     },
     onError: (error) => {
-      // Handle error
-      if (options?.onError) {
-        options.onError();
-      }
+      if (options?.onError) options.onError(error);
       console.error('Mutation failed:', error);
     },
     onSettled: () => {
-      // Handle after mutation is completed (success or error)
-      if (options?.onSettled) {
-        options.onSettled();
-      }
+      if (options?.onSettled) options.onSettled();
     },
   });
 };
