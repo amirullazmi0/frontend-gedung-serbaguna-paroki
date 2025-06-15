@@ -2,6 +2,7 @@
 import { Button, Stack } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import BuildingTable from './components/BuildingTable';
 
 const Section = () => {
 	const navigation = useRouter();
@@ -14,6 +15,7 @@ const Section = () => {
 					Tambah Gedung
 				</Button>
 			</Stack>
+			<BuildingTable />
 		</Stack>
 	);
 };
