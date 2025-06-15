@@ -9,8 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 			width={'100vw'}
 			overflow={'hidden'}
 			bgcolor={colorPallete.white}>
-			<SidebarAdmin />
-			{children}
+			<SidebarAdmin>{children}</SidebarAdmin>
 		</Stack>
 	);
 }
