@@ -162,6 +162,7 @@ const DashboardMap = () => {
 
 			<MapContainer
 				className='map'
+				zoomControl={false}
 				center={selectedMarker ? selectedMarker.position : userPosition || defaultPosition}
 				minZoom={6}
 				zoom={13}
@@ -184,8 +185,6 @@ const DashboardMap = () => {
 				{data &&
 					data.data &&
 					data.data.map(building => {
-						console.log(`Building ${building.id} :`, building);
-
 						return (
 							<Marker
 								key={building.id}
@@ -197,13 +196,10 @@ const DashboardMap = () => {
 											name: building.name,
 											description: building.description,
 										});
-										// setDestination(null); // optional sesuai kebutuhan
 									},
 								}}>
 								<Popup>
 									<strong>{building.name}</strong>
-									<br />
-									{building.description}
 									<br />
 									{building.buildingPhoto && building.buildingPhoto.length > 0 && (
 										<div style={{ marginTop: 8, width: '100%', height: 150, position: 'relative' }}>
