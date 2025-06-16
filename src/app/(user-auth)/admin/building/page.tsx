@@ -1,31 +1,29 @@
 'use client';
 import { authContext } from '@/app/provider/auth-provider/authProvider';
 import { colorPallete } from '@/app/utils/colorspallete';
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import Stack from '@mui/material/Stack';
+import { useRouter } from 'next/navigation';
 import { useContext } from 'react';
+import BuildingTable from './components/BuildingTable';
 
 export default function Home() {
 	const auth = useContext(authContext);
+	const navigation = useRouter();
 	return (
 		<Stack
 			sx={{
-				display: 'grid',
-				gridTemplateColumns: {
-					xs: 'repeat(1, 1fr)',
-					md: 'repeat(3, 1fr)',
-				},
 				minHeight: '100svh',
+				padding: 2,
 			}}>
-			<Stack sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}></Stack>
-			<Stack
-				sx={{
-					bgcolor: colorPallete['low-blue'],
-					padding: 1,
-				}}>
-				<Typography sx={{ color: colorPallete.white }}>{auth.user?.email}</Typography>
-				<Typography sx={{ color: colorPallete.white }}>{auth.user?.role}</Typography>
+			<Stack alignItems={'flex-end'}>
+				<Button
+					variant='contained'
+					onClick={() => navigation.push('/admin/building/add')}>
+					Tambah Gedung
+				</Button>
 			</Stack>
+			<BuildingTable />
 		</Stack>
 	);
 }
