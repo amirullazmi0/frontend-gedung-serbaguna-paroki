@@ -7,8 +7,11 @@ import dayjs from 'dayjs';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { buildingsDummy } from '../DTO/building';
+// import { buildingsDummy } from '../DTO/building';
 import { useParams, useRouter } from 'next/navigation';
+import useQueryApiRequest from '../hook/useQueryApiRequest';
+import { GlobalApiResponse } from '../utils/globalsApiResponse';
+import { BuildingItemType } from '../DTO/building';
 
 const localizer = dayjsLocalizer(dayjs);
 
@@ -114,7 +117,12 @@ const DashboardCalendar: React.FC = () => {
 	const [openImagesModal, setOpenImagesModal] = useState(false);
 
 	const buildingId = useParams()['building-id'];
-	const building = buildingsDummy.find(b => b.id === Number(buildingId));
+	const { data } = useQueryApiRequest<GlobalApiResponse<BuildingItemType>>({
+		key: 'get-building',
+		withAuth: false,
+	});
+
+	const building = data?.data;
 	const navigation = useRouter();
 
 	return (
@@ -152,10 +160,10 @@ const DashboardCalendar: React.FC = () => {
 				}}
 			/>
 
-			{building && building.image && (
+			{building && building.buildingPhoto && (
 				<ImageListModal
 					open={openImagesModal}
-					images={building.image}
+					images={(building.buildingPhoto ?? []).map(photo => photo.url)}
 					onClose={() => setOpenImagesModal(false)}
 				/>
 			)}
