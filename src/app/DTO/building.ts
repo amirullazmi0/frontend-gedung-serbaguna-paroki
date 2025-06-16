@@ -6,19 +6,25 @@ export interface addressType {
   kecamatan: string;
   lat: string;
   lng: string;
-  kota: number;
+  kota: string;
   provinsi: string;
   kodepos: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface supportDocumentType {
   id: string;
   name: string;
   templateDocumentUrl: string;
+  createdAt: string;
+  updatedAt: string;
 }
 export interface BuildingPhotoType {
   id: string;
   url: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface BuildingItemType {
@@ -29,5 +35,7 @@ export interface BuildingItemType {
   buildingPhoto: BuildingPhotoType[];
   buildingAddress: addressType[];
   supportDocumentRequirement: supportDocumentType[];
+  createdAt: string;
+  updatedAt: string;
 }
 
