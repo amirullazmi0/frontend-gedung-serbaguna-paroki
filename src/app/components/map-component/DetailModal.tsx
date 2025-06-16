@@ -2,17 +2,21 @@
 import React from 'react';
 import Image from 'next/image';
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Stack, Typography } from '@mui/material';
-import { buildingItemType } from '@/app/DTO/building';
 import { useRouter } from 'next/navigation';
+import { BuildingItemType } from '@/app/DTO/building';
+import CarouselImages from '../Carousel/CarouselImages';
+import { formatRupiah } from '@/app/utils/formatCurency';
 
 interface DetailModalProps {
 	open: boolean;
 	onClose: () => void;
-	data?: buildingItemType;
+	data?: BuildingItemType;
 }
 
 const DetailModal: React.FC<DetailModalProps> = ({ open, data, onClose }) => {
 	const navigation = useRouter();
+	const images = data?.buildingPhoto;
+	const address = data?.buildingAddress[0];
 	return (
 		<Dialog
 			open={open}
@@ -30,48 +34,13 @@ const DetailModal: React.FC<DetailModalProps> = ({ open, data, onClose }) => {
 			}}>
 			<DialogTitle>{data?.name}</DialogTitle>
 			<DialogContent dividers>
-				<DialogContentText sx={{ mb: 2 }}>{data?.description}</DialogContentText>
 				<Stack gap={2}>
-					<Stack
-						direction='row'
-						spacing={2}
-						flexWrap='wrap'
-						gap={2}
-						// justifyContent='center'
-						sx={{ maxHeight: 300, overflowY: 'auto' }}>
-						{data?.image && data.image.length > 0 ? (
-							data.image.map((url, index) => (
-								<Stack
-									key={index}
-									sx={{
-										position: 'relative',
-										width: {
-											xs: '100%',
-											sm: '50%',
-											md: '33.33%',
-										},
-										// height: 150,
-										aspectRatio: '16/9',
-										borderRadius: 2,
-										overflow: 'hidden',
-										flexShrink: 0,
-									}}>
-									<Image
-										src={url}
-										alt={`${data.name} image ${index + 1}`}
-										fill
-										style={{ objectFit: 'cover' }}
-										priority={index === 0}
-									/>
-								</Stack>
-							))
-						) : (
-							<Typography
-								variant='body2'
-								color='text.secondary'>
-								Tidak ada gambar tersedia.
-							</Typography>
-						)}
+					<Stack gap={3}>
+						<CarouselImages images={(images ?? []).map(photo => photo.url)} />
+						<hr />
+						<Typography variant='h6'>{formatRupiah(data?.price ?? 0)}</Typography>
+						<hr />
+						<Typography>{`${address?.jalan} RT ${address?.rt} RW ${address?.rw}, ${address?.kelurahan}, ${address?.kecamatan}, ${address?.kota}, ${address?.provinsi} ${address?.kodepos}`}</Typography>
 					</Stack>
 					<Stack
 						direction={'row'}
@@ -79,7 +48,7 @@ const DetailModal: React.FC<DetailModalProps> = ({ open, data, onClose }) => {
 						<Button
 							variant='contained'
 							target='_blank'
-							href={`https://www.google.com/maps/search/?api=1&query=${data?.latitude},${data?.longitude}`}>
+							href={`https://www.google.com/maps/search/?api=1&query=${address?.lat},${address?.lng}`}>
 							Lihat di Google Maps
 						</Button>
 						<Button
