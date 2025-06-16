@@ -64,9 +64,7 @@ const SelectLatLng = ({ onChange }: Props) => {
 			/>
 
 			{/* Add Marker at the clicked position */}
-			<Marker position={markerPosition}>
-				<Popup>Lokasi Kamu</Popup>
-			</Marker>
+			<Marker position={markerPosition}>{/* <Popup>Lokasi Kamu</Popup> */}</Marker>
 		</MapContainer>
 	);
 };
