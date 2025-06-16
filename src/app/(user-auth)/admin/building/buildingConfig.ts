@@ -36,3 +36,15 @@ export const AddItemBuildingRequestSchema = yup.object({
     .of(SupportDocumentRequirementSchema)
     .default([]),
 });
+
+export const UpdateItemBuildingRequestSchema = yup.object({
+  id: yup.string().required('ID wajib diisi'),
+  name: yup.string().required('Nama wajib diisi'),
+  price: yup.number().required('Harga wajib diisi'),
+  description: yup.string().default(''), // Make description nullable
+  address: AddressSchema,
+  photo: yup.array().of(PhotoSchema).required('Foto wajib diisi'),
+  supportDocumentRequirement: yup.array()
+    .of(SupportDocumentRequirementSchema)
+    .default([]),
+});
