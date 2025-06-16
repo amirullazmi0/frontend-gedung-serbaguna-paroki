@@ -33,7 +33,7 @@ export default function RootLayout({
 				<QueryProvider>
 					<AuthProvider>
 						<Stack
-							bgcolor={colorPallete.white}
+							bgcolor={colorPallete['low-grey']}
 							color={colorPallete.black}
 							position={'relative'}
 							minHeight={'100vh'}>

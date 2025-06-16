@@ -8,7 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 			minHeight={'100vh'}
 			width={'100vw'}
 			overflow={'hidden'}
-			bgcolor={colorPallete.white}>
+			bgcolor={colorPallete['low-grey']}>
 			<SidebarAdmin>{children}</SidebarAdmin>
 		</Stack>
 	);
