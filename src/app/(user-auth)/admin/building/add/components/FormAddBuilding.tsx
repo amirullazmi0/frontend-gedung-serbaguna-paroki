@@ -56,11 +56,11 @@ const FormAddBuilding = () => {
 	useEffect(() => {
 		if (isSuccess) {
 			setAlertType('success');
-			setAlertMessage('Login Berhasil');
+			setAlertMessage('Data Berhasil Ditambahkan');
 			setShowTime(4000);
 			setAlertShow(true);
 			setTimeout(() => {
-				navigation.push('/admin');
+				navigation.push('/admin/building');
 			}, showTime - 1000);
 		}
 
@@ -68,7 +68,7 @@ const FormAddBuilding = () => {
 			const err: AxiosError = errorPost as AxiosError;
 			const errorData: ErrorData = err.response?.data as ErrorData;
 			setAlertType('error');
-			setAlertMessage(errorData.message || 'Login Failed');
+			setAlertMessage(errorData.message || 'Terjadi Kesalahan');
 			setShowTime(4000);
 			setAlertShow(true);
 		}
@@ -77,42 +77,6 @@ const FormAddBuilding = () => {
 	useEffect(() => {
 		console.log('err', errors);
 	}, [errors]);
-
-	const buildFormData = (data: Record<string, any>): FormData => {
-		const formData = new FormData();
-
-		Object.entries(data).forEach(([key, value]) => {
-			if (Array.isArray(value)) {
-				value.forEach((item, index) => {
-					if (typeof item === 'object' && item !== null) {
-						Object.entries(item).forEach(([nestedKey, nestedValue]) => {
-							const formKey = `${key}[${index}][${nestedKey}]`;
-							if (typeof nestedValue === 'string' || nestedValue instanceof Blob) {
-								formData.append(formKey, nestedValue);
-							} else {
-								formData.append(formKey, JSON.stringify(nestedValue));
-							}
-						});
-					}
-				});
-			} else if (typeof value === 'object' && value !== null) {
-				Object.entries(value).forEach(([nestedKey, nestedValue]) => {
-					const formKey = `${key}[${nestedKey}]`;
-					if (typeof nestedValue === 'string' || nestedValue instanceof Blob) {
-						formData.append(formKey, nestedValue);
-					} else {
-						formData.append(formKey, JSON.stringify(nestedValue));
-					}
-				});
-			} else if (typeof value === 'string' || value instanceof Blob) {
-				formData.append(key, value);
-			} else {
-				formData.append(key, JSON.stringify(value));
-			}
-		});
-
-		return formData;
-	};
 
 	const onSubmit = async (data: InferType<typeof AddItemBuildingRequestSchema>) => {
 		console.log('data upload', data);
