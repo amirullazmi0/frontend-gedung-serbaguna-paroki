@@ -1,6 +1,6 @@
 'use client';
 import DashboardCalendar from '@/app/components/DashboardCalendar';
-import { buildingItemType, buildingsDummy } from '@/app/DTO/building';
+import { BuildingItemType } from '@/app/DTO/building';
 import { colorPallete } from '@/app/utils/colorspallete';
 import { Stack, Typography } from '@mui/material';
 import { useParams } from 'next/navigation';
@@ -8,13 +8,13 @@ import React, { useEffect, useState } from 'react';
 
 const Section = () => {
 	const buildingId = useParams()['building-id'];
-	const [building, setBuilding] = useState<buildingItemType>();
+	const [building, setBuilding] = useState<BuildingItemType>();
 	// const building = buildingsDummy.find(b => b.id == Number(buildingId));
 
-	useEffect(() => {
-		const getData = buildingsDummy.find(b => b.id == Number(buildingId));
-		setBuilding(getData);
-	}, [buildingId]);
+	// useEffect(() => {
+	// 	const getData = buildingsDummy.find(b => b.id == Number(buildingId));
+	// 	setBuilding(getData);
+	// }, [buildingId]);
 	return (
 		<Stack
 			sx={{
