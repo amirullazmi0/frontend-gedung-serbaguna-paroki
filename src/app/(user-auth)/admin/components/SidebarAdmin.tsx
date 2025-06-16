@@ -43,6 +43,11 @@ export const SidebarItem: {
     url: '/admin',
   },
   {
+    icon: <DashboardOutlinedIcon />,
+    text: 'Gedung',
+    url: '/admin/building',
+  },
+  {
     icon: <MapOutlinedIcon />,
     text: 'Map',
     url: '/admin/map',
@@ -60,10 +65,14 @@ export default function SidebarAdmin({ children }: SidebarAdminProps) {
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const router = useRouter();
   const pathname = usePathname();
-	const {user} = useContext(authContext)
+	const {user, logout, authenticated} = useContext(authContext)
+
 
   const DrawerList = (
-    <Box sx={{ width: 350 }}>
+    <Box sx={{ width:{
+			xs: 250		,
+			md: 350,
+		} }}>
 			<Stack p={2} justifyContent={'center'} alignItems={'center'} gap={2}>
 				<Image
 					src={logo}
@@ -109,7 +118,7 @@ export default function SidebarAdmin({ children }: SidebarAdminProps) {
           </ListItemButton>
         </ListItem>
         <ListItem>
-          <ListItemButton>
+          <ListItemButton onClick={logout}>
             <ListItemIcon>
               <LogoutOutlinedIcon />
             </ListItemIcon>
@@ -130,7 +139,7 @@ export default function SidebarAdmin({ children }: SidebarAdminProps) {
             position: 'fixed',
             top: 16,
             left: 16,
-            zIndex: 1,
+            zIndex: 10,
             bgcolor: 'white',
             boxShadow: 2,
             '&:hover': {
