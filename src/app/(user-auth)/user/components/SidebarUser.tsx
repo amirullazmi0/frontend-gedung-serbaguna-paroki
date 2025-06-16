@@ -15,7 +15,7 @@ import { authContext } from '@/app/provider/auth-provider/authProvider';
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 
-interface SidebarAdminProps {
+interface SidebarUserProps {
 	children: React.ReactNode;
 }
 
@@ -32,26 +32,16 @@ export const SidebarItem: {
 	{
 		icon: <DashboardOutlinedIcon />,
 		text: 'Dashboard',
-		url: '/admin',
-	},
-	{
-		icon: <AccountBalanceOutlinedIcon />,
-		text: 'Gedung',
-		url: '/admin/building',
-	},
-	{
-		icon: <MapOutlinedIcon />,
-		text: 'Map',
-		url: '/admin/map',
+		url: '/user',
 	},
 	{
 		icon: <ArticleOutlinedIcon />,
 		text: 'Report',
-		url: '/admin/report',
+		url: '/user/report',
 	},
 ];
 
-export default function SidebarAdmin({ children }: SidebarAdminProps) {
+export default function SidebarUser({ children }: SidebarUserProps) {
 	const [open, setOpen] = useState(false);
 	const theme = useTheme();
 	const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
@@ -76,7 +66,7 @@ export default function SidebarAdmin({ children }: SidebarAdminProps) {
 				<Typography
 					variant='h3'
 					sx={{ color: colorPallete['white'] }}>
-					ADMIN
+					USER
 				</Typography>
 			</Stack>
 			<List>
@@ -110,8 +100,21 @@ export default function SidebarAdmin({ children }: SidebarAdminProps) {
 			<Divider />
 			<List>
 				<ListItem>
-					<ListItemButton onClick={() => router.push('/user/profile')}>
-						<ListItemIcon>
+					<ListItemButton
+						onClick={() => router.push('/user/profile')}
+						sx={{
+							borderRadius: 2,
+							backgroundColor: pathname === '/user/profile' ? colorPallete['low-blue'] : 'transparent',
+							color: pathname === '/user/profile' ? colorPallete.white : 'inherit',
+							':hover': {
+								backgroundColor: pathname === '/user/profile' ? colorPallete['low-blue'] : 'inherit',
+								color: pathname === '/user/profile' ? colorPallete.white : 'inherit',
+							},
+						}}>
+						<ListItemIcon
+							sx={{
+								color: pathname === '/user/profile' ? colorPallete.white : 'inherit',
+							}}>
 							<PersonOutlineOutlinedIcon />
 						</ListItemIcon>
 						<ListItemText primary='Profil' />

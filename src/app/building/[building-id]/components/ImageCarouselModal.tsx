@@ -34,14 +34,6 @@ const ImageCarouselModal: React.FC<ImageCarouselModalProps> = ({ open, images, i
 		return () => window.removeEventListener('keydown', handleKeyDown);
 	}, [open, images.length]);
 
-	const handlePrev = () => {
-		setIndex(prev => (prev === 0 ? images.length - 1 : prev - 1));
-	};
-
-	const handleNext = () => {
-		setIndex(prev => (prev === images.length - 1 ? 0 : prev + 1));
-	};
-
 	if (images.length === 0) {
 		return null; // or a dialog saying "No images"
 	}
@@ -78,67 +70,9 @@ const ImageCarouselModal: React.FC<ImageCarouselModalProps> = ({ open, images, i
 					height: 600,
 					backgroundColor: '#000',
 				}}>
-				<IconButton
-					onClick={handlePrev}
-					sx={{
-						position: 'absolute',
-						left: 8,
-						top: '50%',
-						transform: 'translateY(-50%)',
-						color: 'white',
-						zIndex: 10,
-					}}
-					size='large'
-					aria-label='previous image'>
-					&#8592;
-				</IconButton>
-
-				<Box
-					component='img'
-					src={images[index]}
-					alt={`Image ${index + 1}`}
-					sx={{
-						maxWidth: '100%',
-						maxHeight: '100%',
-						objectFit: 'contain',
-						userSelect: 'none',
-					}}
-				/>
-
-				<IconButton
-					onClick={handleNext}
-					sx={{
-						position: 'absolute',
-						right: 8,
-						top: '50%',
-						transform: 'translateY(-50%)',
-						color: 'white',
-						zIndex: 10,
-					}}
-					size='large'
-					aria-label='next image'>
-					&#8594;
-				</IconButton>
+				Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque ut ratione suscipit veritatis enim, cum nam. Nostrum, totam nulla, consequatur minus ipsum, dolore ipsa aspernatur culpa at
+				cupiditate modi tempora.
 			</DialogContent>
-			<Stack
-				direction='row'
-				justifyContent='center'
-				spacing={1}
-				sx={{ p: 1, bgcolor: '#f0f0f0' }}>
-				{images.map((_, i) => (
-					<Box
-						key={i}
-						onClick={() => setIndex(i)}
-						sx={{
-							width: 12,
-							height: 12,
-							borderRadius: '50%',
-							bgcolor: i === index ? 'primary.main' : 'grey.400',
-							cursor: 'pointer',
-						}}
-					/>
-				))}
-			</Stack>
 		</Dialog>
 	);
 };

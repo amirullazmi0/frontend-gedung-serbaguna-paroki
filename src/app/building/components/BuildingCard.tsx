@@ -47,7 +47,8 @@ const BuildingCard = () => {
 				{data?.data?.map((row, index) => (
 					<Card
 						key={index}
-						sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+						elevation={0}
+						sx={{ display: 'flex', flexDirection: 'column', height: '100%', borderRadius: 4 }}>
 						<CardContent>
 							<Typography
 								variant='subtitle2'
