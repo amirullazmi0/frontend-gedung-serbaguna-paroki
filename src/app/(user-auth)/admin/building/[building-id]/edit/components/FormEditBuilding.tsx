@@ -132,7 +132,7 @@ const FormEditBuilding = () => {
 					sx={{
 						color: colorPallete.primary,
 					}}>
-					UPDATE GEDUNG
+					EDIT GEDUNG
 				</Typography>
 			</Stack>
 			<FormProvider {...form}>
