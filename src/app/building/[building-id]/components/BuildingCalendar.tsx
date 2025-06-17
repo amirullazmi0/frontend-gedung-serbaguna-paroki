@@ -1,13 +1,12 @@
 'use client';
-import React, { useContext, useState } from 'react';
-import { Stack, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Grid, Box, IconButton } from '@mui/material';
+import React, { useContext, useEffect, useState } from 'react';
+import { Stack, Button, Typography, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { Calendar, dayjsLocalizer, Event, View, ToolbarProps } from 'react-big-calendar';
+import { Calendar, dayjsLocalizer, Event, View, ToolbarProps, NavigateAction } from 'react-big-calendar';
 import dayjs from 'dayjs';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-// import { buildingsDummy } from '../DTO/building';
 import { useParams, useRouter } from 'next/navigation';
 import useQueryApiRequest from '@/app/hook/useQueryApiRequest';
 import { GlobalApiResponse } from '@/app/utils/globalsApiResponse';
@@ -15,16 +14,19 @@ import { BuildingItemType } from '@/app/DTO/building';
 import CarouselImages from '@/app/components/Carousel/CarouselImages';
 import { Alert, AlertType } from '@/app/components/Alert/Alert';
 import { authContext } from '@/app/provider/auth-provider/authProvider';
+import { RentBuildingItemType, RentStatus } from '@/app/(user-auth)/user/components/rentBuilding';
 
 const localizer = dayjsLocalizer(dayjs);
 
-const events: Event[] = [
-	{ title: 'Weeding', start: new Date(2025, 4, 27, 10, 0), end: new Date(2025, 4, 30, 11, 0), allDay: false },
-	{ title: 'Meeting', start: new Date(2025, 4, 28), end: new Date(2025, 4, 29), allDay: true },
-	{ title: 'Workshop', start: new Date(2025, 4, 2), end: new Date(2025, 4, 8), allDay: true },
-];
+interface CustomEvent extends Event {
+	id: string; // Custom field
+	eventName: string;
+	startDate: string;
+	endDate: string;
+	status: RentStatus;
+}
 
-const CustomToolbar: React.FC<ToolbarProps & { onOpenImages: () => void }> = ({ label, onNavigate, onOpenImages }) => {
+const CustomToolbar: React.FC<ToolbarProps<CustomEvent> & { onOpenImages: () => void }> = ({ label, onNavigate, onOpenImages }) => {
 	const goToBack = () => onNavigate('PREV');
 	const goToNext = () => onNavigate('NEXT');
 	const goToToday = () => onNavigate('TODAY');
@@ -61,11 +63,7 @@ const CustomToolbar: React.FC<ToolbarProps & { onOpenImages: () => void }> = ({ 
 	);
 };
 
-const ImageListModal: React.FC<{
-	open: boolean;
-	images: string[];
-	onClose: () => void;
-}> = ({ open, images, onClose }) => (
+const ImageListModal: React.FC<{ open: boolean; images: string[]; onClose: () => void }> = ({ open, images, onClose }) => (
 	<Dialog
 		open={open}
 		onClose={onClose}
@@ -98,19 +96,65 @@ const BuildingCalendar: React.FC = () => {
 	const [alertMessage, setAlertMessage] = useState<React.ReactNode>('');
 	const [alertType, setAlertType] = useState<AlertType>('success');
 	const [showTime, setShowTime] = useState<number>(4000);
+	const [openEventModal, setOpenEventModal] = useState(false); // State for event modal
+	const [selectedEvent, setSelectedEvent] = useState<RentBuildingItemType | null>(null);
 
 	const buildingId = useParams()['building-id'];
+
+	// Fetch building data and rent events
 	const { data } = useQueryApiRequest<GlobalApiResponse<BuildingItemType>>({
 		key: 'get-building',
 		withAuth: false,
-		params: {
-			id: buildingId,
-		},
+		params: { id: buildingId },
 	});
+
+	const { data: rentBuilding } = useQueryApiRequest<GlobalApiResponse<RentBuildingItemType[]>>({
+		key: 'get-rent-building-by-building',
+		withAuth: false,
+		params: { buildingId: buildingId },
+	});
+
+	const [rentBuildingData, setRentBuildingData] = useState<RentBuildingItemType[] | undefined>([]);
+
+	useEffect(() => {
+		if (rentBuilding) {
+			// Filter the events to only include those with a "SUCCESS" status
+			const filteredRentBuildingData = rentBuilding?.data?.filter(event => event.status === RentStatus.SUCCESS);
+			setRentBuildingData(filteredRentBuildingData);
+		}
+	}, [rentBuilding]);
+
+	// Map rentBuildingData to events for react-big-calendar
+	const events: CustomEvent[] =
+		rentBuildingData?.map(event => ({
+			title: `${event.eventName || '-'}`, // Show event name and status
+			start: new Date(event.startDate),
+			end: new Date(event.endDate),
+			allDay: false,
+			id: event.id,
+			eventName: event.eventName,
+			startDate: event.startDate,
+			endDate: event.endDate,
+			status: event.status,
+		})) || [];
 
 	const { user, authenticated } = useContext(authContext);
 	const building = data?.data;
 	const navigation = useRouter();
+
+	const handleEventClick = (event: CustomEvent) => {
+		// Set the selected event and open the modal
+		const clickedEvent = rentBuildingData?.find(rent => rent.id === event.id);
+		if (clickedEvent) {
+			setSelectedEvent(clickedEvent);
+			setOpenEventModal(true);
+		}
+	};
+
+	const handleModalClose = () => {
+		setOpenEventModal(false);
+		setSelectedEvent(null);
+	};
 
 	return (
 		<Stack>
@@ -160,7 +204,7 @@ const BuildingCalendar: React.FC = () => {
 								}, 3000);
 							}
 
-							if ((authenticated && user?.role === 'ADMIN') || user?.role == 'SUPERADMIN') {
+							if ((authenticated && user?.role === 'ADMIN') || user?.role === 'SUPERADMIN') {
 								setAlertShow(true);
 								setAlertType('error');
 								setAlertMessage(
@@ -196,6 +240,7 @@ const BuildingCalendar: React.FC = () => {
 				onNavigate={setDate}
 				onView={setView}
 				toolbar
+				onSelectEvent={handleEventClick} // Event click handler
 				components={{
 					toolbar: props => (
 						<CustomToolbar
@@ -212,6 +257,43 @@ const BuildingCalendar: React.FC = () => {
 					onClose={() => setOpenImagesModal(false)}
 				/>
 			)}
+
+			{/* Modal for Rent Event Details */}
+			<Dialog
+				open={openEventModal}
+				onClose={handleModalClose}
+				maxWidth='sm'
+				fullWidth>
+				<IconButton
+					aria-label='close'
+					onClick={handleModalClose}
+					sx={{ position: 'absolute', right: 8, top: 8, color: theme => theme.palette.grey[500] }}
+					size='large'>
+					<CloseIcon />
+				</IconButton>
+
+				<DialogContent dividers>
+					{selectedEvent ? (
+						<>
+							{/* <CarouselImages images={data?.data?.buildingPhoto?.map(photo => photo.url) ?? []} /> */}
+							<Typography variant='h6'>Kegiatan : {selectedEvent.eventName ?? '-'}</Typography>
+							<Typography>Penyewa : {selectedEvent.user.name ?? '-'}</Typography>
+							<Typography
+								variant='subtitle1'
+								color='textSecondary'>
+								{`Mulai: ${dayjs(selectedEvent.startDate).format('DD MMM YYYY')}`}
+							</Typography>
+							<Typography
+								variant='subtitle1'
+								color='textSecondary'>
+								{`Selesai: ${dayjs(selectedEvent.endDate).format('DD MMM YYYY')}`}
+							</Typography>
+						</>
+					) : (
+						<Typography variant='body1'>No event selected</Typography>
+					)}
+				</DialogContent>
+			</Dialog>
 		</Stack>
 	);
 };
