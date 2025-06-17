@@ -10,6 +10,7 @@ import { BuildingItemType } from '@/app/DTO/building';
 import useQueryApiRequest from '@/app/hook/useQueryApiRequest';
 import MapBuildingDetail from './components/MapBuildingDetail';
 import BuildingDetail from './components/BuildingDetail';
+import { colorPallete } from '@/app/utils/colorspallete';
 
 export default function BuildingDetailPage() {
 	const auth = useContext(authContext);
@@ -52,6 +53,7 @@ export default function BuildingDetailPage() {
 	return (
 		<Stack
 			minHeight='100vh'
+			bgcolor={colorPallete.white}
 			sx={{
 				display: 'grid',
 				gridTemplateColumns: {
