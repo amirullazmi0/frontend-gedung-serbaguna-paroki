@@ -22,6 +22,9 @@ import dayjs from 'dayjs';
 import useQueryApiRequest from '@/app/hook/useQueryApiRequest';
 import { GlobalApiResponse } from '@/app/utils/globalsApiResponse';
 import { RentBuildingItemType, RentStatus } from './rentBuilding';
+import { useRouter } from 'next/navigation';
+import { colorPallete } from '@/app/utils/colorspallete';
+import { rentStatusColor, rentStatusLabelChip } from '@/app/components/RentStatusChip';
 
 const RentBuildingTable = () => {
 	const { data, isLoading } = useQueryApiRequest<GlobalApiResponse<RentBuildingItemType[]>>({
@@ -29,41 +32,13 @@ const RentBuildingTable = () => {
 		withAuth: true,
 	});
 
+	const router = useRouter();
+
 	const rentList = data?.data || [];
 	const [selectedItem, setSelectedItem] = useState<RentBuildingItemType | null>(null);
 
 	const handleOpenDetail = (item: RentBuildingItemType) => setSelectedItem(item);
 	const handleCloseDetail = () => setSelectedItem(null);
-
-	const getStatusColor = (status: RentStatus): 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' => {
-		switch (status) {
-			case RentStatus.PENDING:
-				return 'warning';
-			case RentStatus.ONPROSES:
-				return 'info';
-			case RentStatus.SUCCESS:
-				return 'success';
-			case RentStatus.CANCELLED:
-				return 'error';
-			default:
-				return 'default';
-		}
-	};
-
-	const statusLabel = (status: RentStatus) => {
-		switch (status) {
-			case RentStatus.PENDING:
-				return 'Menunggu';
-			case RentStatus.ONPROSES:
-				return 'Diproses';
-			case RentStatus.SUCCESS:
-				return 'Selesai';
-			case RentStatus.CANCELLED:
-				return 'Dibatalkan';
-			default:
-				return status;
-		}
-	};
 
 	return (
 		<Stack p={2}>
@@ -98,8 +73,8 @@ const RentBuildingTable = () => {
 									<TableCell>{item.building?.name || '-'}</TableCell>
 									<TableCell>
 										<Chip
-											label={statusLabel(item.status)}
-											color={getStatusColor(item.status)}
+											label={rentStatusLabelChip(item.status)}
+											color={rentStatusColor(item.status)}
 											size='small'
 											variant='outlined'
 										/>
@@ -144,12 +119,61 @@ const RentBuildingTable = () => {
 					{selectedItem && (
 						<Stack spacing={2}>
 							<Typography>Nama Gedung: {selectedItem.building.name}</Typography>
-							<Typography>Status: {statusLabel(selectedItem.status)}</Typography>
+							<Typography>
+								Status:{' '}
+								<Chip
+									label={rentStatusLabelChip(selectedItem.status)}
+									color={rentStatusColor(selectedItem.status)}
+									size='small'
+									variant='outlined'
+								/>
+							</Typography>
 							<Typography>Tanggal Mulai: {dayjs(selectedItem.startDate).format('DD MMM YYYY')}</Typography>
 							<Typography>Tanggal Selesai: {dayjs(selectedItem.endDate).format('DD MMM YYYY')}</Typography>
-							<Typography>Jumlah Dokumen: {selectedItem._count.supportDocumentRentBuilding}</Typography>
-							<Typography>Jumlah Invoice: {selectedItem._count.invoice}</Typography>
-							<Typography>Created At: {dayjs(selectedItem.createdAt).format('DD MMM YYYY HH:mm')}</Typography>
+							{selectedItem.supportDocumentRentBuilding.length > 0 && (
+								<Stack
+									gap={2}
+									p={1}
+									border={`1px solid ${colorPallete['low-grey']}`}>
+									<Typography>Dokumen:</Typography>
+									{selectedItem.supportDocumentRentBuilding.map((document, index) => (
+										<Stack
+											flexDirection={'row'}
+											gap={1}>
+											<Typography>
+												{index + 1}. {document.supportDocumentRequirement.name}
+											</Typography>
+											<Button
+												variant='outlined'
+												size='small'
+												target='_blank'
+												href={`${document.documentUrl}`}
+												sx={{
+													width: 'fit-content',
+												}}>
+												Lihat
+											</Button>
+										</Stack>
+									))}
+								</Stack>
+							)}
+
+							{selectedItem.invoice.length > 0 && (
+								<Stack flexDirection={'row'}>
+									<Typography>Invoice: </Typography>
+									<Button
+										variant='outlined'
+										size='small'
+										target='_blank'
+										href={`${selectedItem.invoice[0].url}`}
+										sx={{
+											width: 'fit-content',
+										}}>
+										Lihat
+									</Button>
+								</Stack>
+							)}
+							<Typography>Dibuat pada: {dayjs(selectedItem.createdAt).format('DD MMM YYYY HH:mm')}</Typography>
 
 							<Typography>Foto Gedung:</Typography>
 							<Stack
