@@ -89,7 +89,9 @@ const RentBuildingTable = () => {
 					<Table>
 						<TableHead>
 							<TableRow>
+								<TableCell></TableCell>
 								<TableCell>Nama Gedung</TableCell>
+								<TableCell sx={{ bgcolor: colorPallete.primary, color: 'white' }}>Kegiatan</TableCell>
 								<TableCell>Status</TableCell>
 								<TableCell>Tanggal Mulai</TableCell>
 								<TableCell>Tanggal Selesai</TableCell>
@@ -98,9 +100,11 @@ const RentBuildingTable = () => {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{rentList.map(item => (
+							{rentList.map((item, index) => (
 								<TableRow key={item.id}>
+									<TableCell>{index + 1}</TableCell>
 									<TableCell>{item.building?.name || '-'}</TableCell>
+									<TableCell sx={{ bgcolor: colorPallete['low-grey'] }}>{item.eventName || '-'}</TableCell>
 									<TableCell>
 										<Chip
 											label={item.status}
