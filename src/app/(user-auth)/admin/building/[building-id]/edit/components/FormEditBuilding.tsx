@@ -11,12 +11,12 @@ import { useLogin } from '@/app/hook/auth/useAuthMutation';
 import { AxiosError } from 'axios';
 import { ErrorData, GlobalApiResponse } from '@/app/utils/globalsApiResponse';
 import SelectLatLng from './SelectLatLng';
-import FormSelectPhoto from './FormSelectPhoto';
-import FormSupportDocument from './FormSupportDocument';
 import useMutationApiRequest from '@/app/hook/useMutationApiRequest';
 import { UpdateItemBuildingRequestSchema } from '../../../buildingConfig';
 import useQueryApiRequest from '@/app/hook/useQueryApiRequest';
 import { BuildingItemType } from '@/app/DTO/building';
+import FormEditSelectPhoto from './FormEditSelectPhoto';
+import FormEditSupportDocument from './FormEditSupportDocument';
 
 const FormEditBuilding = () => {
 	const buildingId = useParams()['building-id'];
@@ -46,7 +46,7 @@ const FormEditBuilding = () => {
 	const [alertType, setAlertType] = useState<AlertType>('success');
 	const [showTime, setShowTime] = useState<number>(4000);
 	const {
-		mutateAsync: postBuilding,
+		mutateAsync: updateBuilding,
 		isPending,
 		isSuccess,
 		isError: isErrorPost,
@@ -61,12 +61,12 @@ const FormEditBuilding = () => {
 
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.between('xs', 'md'));
-	const isDesktop = useMediaQuery(theme.breakpoints.up('lg')) && !isMobile;
+	const isDesktop = useMediaQuery(theme.breakpoints.up('md')) && !isMobile;
 
 	useEffect(() => {
 		if (isSuccess) {
 			setAlertType('success');
-			setAlertMessage('Data Berhasil Ditambahkan');
+			setAlertMessage('Data Berhasil Diubah');
 			setShowTime(4000);
 			setAlertShow(true);
 			setTimeout(() => {
@@ -102,14 +102,12 @@ const FormEditBuilding = () => {
 			});
 			setValue('description', building.description);
 			setValue('price', building.price);
-			setValue('photo', building.buildingPhoto);
-			setValue('supportDocumentRequirement', building.supportDocumentRequirement);
 			trigger();
 		}
 	}, [building]);
 
 	const onSubmit = async (data: InferType<typeof UpdateItemBuildingRequestSchema>) => {
-		await postBuilding(data);
+		await updateBuilding(data);
 	};
 	return (
 		<Stack
@@ -117,6 +115,7 @@ const FormEditBuilding = () => {
 			onSubmit={handleSubmit(onSubmit)}
 			width={'100%'}
 			gap={2}
+			bgcolor={colorPallete.white}
 			padding={2}>
 			<Alert
 				type={alertType}
@@ -351,6 +350,27 @@ const FormEditBuilding = () => {
 									/>
 								)}
 							/>
+
+							{isMobile && (
+								<Stack
+									padding={2}
+									gap={1}
+									height={'fit-content'}
+									bgcolor={colorPallete['low-grey']}
+									borderRadius={2}>
+									<Typography>Pilih Lokasi Gedung</Typography>
+									<SelectLatLng
+										lat={Number(watch('address.lat'))}
+										lng={Number(watch('address.lng'))}
+										onChange={e => {
+											console.log('onChange', e);
+											setValue('address.lat', e.lat.toString());
+											setValue('address.lng', e.lng.toString());
+											trigger(['address.lat', 'address.lng']);
+										}}
+									/>
+								</Stack>
+							)}
 							<Controller
 								name='address.lat'
 								control={control}
@@ -385,8 +405,8 @@ const FormEditBuilding = () => {
 							/>
 						</Stack>
 
-						<FormSelectPhoto />
-						<FormSupportDocument />
+						<FormEditSelectPhoto building={building} />
+						<FormEditSupportDocument building={building} />
 
 						{/* Submit Button */}
 						<Button
