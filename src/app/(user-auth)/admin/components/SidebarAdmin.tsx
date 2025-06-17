@@ -44,11 +44,11 @@ export const SidebarItem: {
 		text: 'Map',
 		url: '/admin/map',
 	},
-	{
-		icon: <ArticleOutlinedIcon />,
-		text: 'Report',
-		url: '/admin/report',
-	},
+	// {
+	// 	icon: <ArticleOutlinedIcon />,
+	// 	text: 'Report',
+	// 	url: '/admin/report',
+	// },
 ];
 
 export default function SidebarAdmin({ children }: SidebarAdminProps) {
@@ -156,6 +156,7 @@ export default function SidebarAdmin({ children }: SidebarAdminProps) {
 					sx={{
 						width: 350,
 						flexShrink: 0,
+						zIndex: 100,
 						bgcolor: colorPallete.white,
 						boxShadow: '0px 0px 20px -5px rgba(0, 0, 0, 0.25)',
 					}}>
