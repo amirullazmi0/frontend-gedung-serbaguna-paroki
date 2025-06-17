@@ -87,6 +87,7 @@ const FormAddBuilding = () => {
 			component='form'
 			onSubmit={handleSubmit(onSubmit)}
 			width={'100%'}
+			bgcolor={colorPallete.white}
 			gap={2}
 			padding={2}>
 			<Alert
