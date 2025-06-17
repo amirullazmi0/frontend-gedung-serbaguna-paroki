@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Stack, TextField, Button, Typography, InputAdornment, IconButton } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,6 +13,7 @@ import { AxiosError } from 'axios';
 import { ErrorData } from '@/app/utils/globalsApiResponse';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { authContext } from '@/app/provider/auth-provider/authProvider';
 
 const FormLogin = () => {
 	const {
@@ -28,6 +29,8 @@ const FormLogin = () => {
 			password: '',
 		},
 	});
+
+	const { checkAuth } = useContext(authContext);
 
 	const [showPassword, setShowPassword] = useState(false);
 	const [alertShow, setAlertShow] = useState(false);
@@ -47,6 +50,7 @@ const FormLogin = () => {
 				setAlertShow(true);
 				setTimeout(() => {
 					if (data.data?.role) {
+						checkAuth();
 						const role = data.data?.role.toLowerCase();
 						navigation.push(`/${role}`);
 					}
