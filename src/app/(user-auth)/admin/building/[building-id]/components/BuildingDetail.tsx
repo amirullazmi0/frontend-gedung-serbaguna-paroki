@@ -6,6 +6,7 @@ import { Divider, Button, Stack, Typography } from '@mui/material';
 import React from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { colorPallete } from '@/app/utils/colorspallete';
 interface Props {
 	building: BuildingItemType;
 }
