@@ -30,7 +30,19 @@ export interface RentBuildingItemType {
     }[];
   };
 
-  invoice: any[]; // kalau ada detail struktur invoice, bisa diganti
+  supportDocumentRentBuilding: {
+    id: string;
+    documentUrl: string;
+    createdAt: string;
+    updatedAt: string;
+    supportDocumentRequirement: {
+      name: string;
+    };
+  }[];
+
+  invoice: {
+    url: string
+  }[]; // bisa diganti kalau ada detail
   _count: {
     invoice: number;
     supportDocumentRentBuilding: number;
