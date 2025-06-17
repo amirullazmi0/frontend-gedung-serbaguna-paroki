@@ -28,7 +28,6 @@ const FormSupportDocument = () => {
 	});
 
 	useEffect(() => {
-		// Initialize empty array if undefined
 		if (!watch('supportDocumentRequirement')) {
 			setValue('supportDocumentRequirement', []);
 		}
@@ -36,7 +35,7 @@ const FormSupportDocument = () => {
 
 	const addSupportDocument = () => {
 		const currentDocs = watch('supportDocumentRequirement') || [];
-		setValue('supportDocumentRequirement', [...currentDocs, { name: '', templateDocumentUrl: '' }]);
+		setValue('supportDocumentRequirement', [...currentDocs, { name: '', templateDocumentUrl: '', id: '' }]);
 		setIsUploading(prev => [...prev, false]);
 	};
 
@@ -134,7 +133,12 @@ const FormSupportDocument = () => {
 								<Button
 									variant='contained'
 									component='label'
-									sx={{ paddingRight: 2, minWidth: '150px' }}>
+									sx={{
+										paddingRight: 2,
+										minWidth: {
+											md: '150px',
+										},
+									}}>
 									Pilih File
 									<input
 										type='file'
