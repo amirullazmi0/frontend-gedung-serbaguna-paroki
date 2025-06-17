@@ -68,7 +68,7 @@ const FormSelectPhoto = () => {
 			setUploading(false);
 			setValue(
 				'photo',
-				newImages.map(image => ({ url: image.url }))
+				newImages.map(image => ({ url: image.url, id: '' }))
 			);
 		}
 	};
