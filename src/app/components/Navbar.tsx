@@ -63,6 +63,8 @@ export default function Navbar(props: Props) {
 		setAnchorElUser(null);
 	};
 
+	const { logout } = useContext(authContext);
+
 	const RenderUserMenu = ({ anchorEl, onClose, user, router }: { anchorEl: HTMLElement | null; onClose: () => void; user: any; router: any }) => {
 		if (!anchorEl) return null;
 
@@ -91,7 +93,7 @@ export default function Navbar(props: Props) {
 						</MenuItem>
 					)}
 					{user && (
-						<MenuItem onClick={onClose}>
+						<MenuItem onClick={() => logout()}>
 							<Typography sx={{ textAlign: 'center' }}>Logout</Typography>
 						</MenuItem>
 					)}
