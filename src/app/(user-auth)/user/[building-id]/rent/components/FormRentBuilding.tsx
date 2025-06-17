@@ -16,6 +16,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { Alert, AlertType } from '@/app/components/Alert/Alert';
 import { AxiosError } from 'axios';
+import { colorPallete } from '@/app/utils/colorspallete';
+import { formatRupiah } from '@/app/utils/formatCurency';
 
 type RentBuildingPayload = {
 	buildingId: string;
@@ -139,24 +141,33 @@ const FormRentBuilding = () => {
 				<Stack gap={2}>
 					<CarouselImages images={building?.buildingPhoto?.map(p => p.url) ?? []} />
 					<Typography variant='h6'>{building?.name}</Typography>
-					<Typography>Harga: {building?.price}</Typography>
+					<Typography>Harga: {formatRupiah(building?.price ?? 0)}</Typography>
 					<Typography sx={{ whiteSpace: 'pre-wrap' }}>{building?.description}</Typography>
 
-					<Typography variant='subtitle1'>Alamat:</Typography>
-					{building?.buildingAddress?.[0] && (
-						<Stack pl={1}>
-							{Object.entries(building.buildingAddress[0]).map(([key, value]) => (
-								<Typography key={key}>
-									{key[0].toUpperCase() + key.slice(1)}: {value}
-								</Typography>
-							))}
-						</Stack>
-					)}
+					<Typography variant='subtitle1'>Alamat Gedung:</Typography>
+					<Stack
+						p={2}
+						gap={2}
+						border={`1px solid ${colorPallete['low-grey']}`}>
+						<Typography>Jalan : {building?.buildingAddress[0].jalan}</Typography>
+						<Typography>RT : {building?.buildingAddress[0].rt}</Typography>
+						<Typography>RW : {building?.buildingAddress[0].rw}</Typography>
+						<Typography>Kelurahan : {building?.buildingAddress[0].kelurahan}</Typography>
+						<Typography>Kecamatan : {building?.buildingAddress[0].kecamatan}</Typography>
+						<Typography>Kota : {building?.buildingAddress[0].kota}</Typography>
+						<Typography>Provinsi : {building?.buildingAddress[0].provinsi}</Typography>
+						<Typography>Kode Pos : {building?.buildingAddress[0].kodepos}</Typography>
+					</Stack>
 
-					<Typography variant='subtitle1'>Penyedia:</Typography>
-					<Typography>Nama: {building?.user?.name}</Typography>
-					<Typography>Kontak: {building?.user?.phone}</Typography>
-					<Typography>Email: {building?.user?.email}</Typography>
+					<Typography variant='subtitle1'>Penyedia Gedung:</Typography>
+					<Stack
+						p={2}
+						gap={2}
+						border={`1px solid ${colorPallete['low-grey']}`}>
+						<Typography>Nama: {building?.user?.name}</Typography>
+						<Typography>Kontak: {building?.user?.phone}</Typography>
+						<Typography>Email: {building?.user?.email}</Typography>
+					</Stack>
 				</Stack>
 
 				{/* Right: Form */}
@@ -221,8 +232,11 @@ const FormRentBuilding = () => {
 									}}>
 									<Typography>{doc.name}</Typography>
 									<Button
-										variant='contained'
+										variant='outlined'
 										href={doc.templateDocumentUrl}
+										sx={{
+											width: 'fit-content',
+										}}
 										target='_blank'>
 										Lihat Template
 									</Button>
@@ -234,6 +248,9 @@ const FormRentBuilding = () => {
 										<Button
 											variant='contained'
 											component='label'
+											sx={{
+												minWidth: '150px',
+											}}
 											disabled={isUploading[index]}>
 											{isUploading[index] ? 'Mengunggah...' : 'Pilih File'}
 											<input
@@ -269,7 +286,7 @@ const FormRentBuilding = () => {
 											<Typography
 												variant='body2'
 												color='textSecondary'
-												sx={{ wordBreak: 'break-word', maxWidth: '300px' }}>
+												sx={{ wordBreak: 'break-word' }}>
 												{field.value}
 											</Typography>
 										)}
