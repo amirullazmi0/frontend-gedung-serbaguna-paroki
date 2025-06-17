@@ -27,6 +27,13 @@ export interface BuildingPhotoType {
   updatedAt: string;
 }
 
+export interface UserBuildingType {
+  id: string;
+  email: string;
+  phone: string;
+  name: string
+}
+
 export interface BuildingItemType {
   id: string;
   name: string;
@@ -35,6 +42,7 @@ export interface BuildingItemType {
   buildingPhoto: BuildingPhotoType[];
   buildingAddress: addressType[];
   supportDocumentRequirement: supportDocumentType[];
+  user: UserBuildingType;
   createdAt: string;
   updatedAt: string;
 }
