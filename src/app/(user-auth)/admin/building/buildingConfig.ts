@@ -18,10 +18,12 @@ export const AddressSchema = yup.object({
 });
 
 export const PhotoSchema = yup.object({
+  id: yup.string().default(''),
   url: yup.string().required('URL wajib diisi'),
 });
 
 export const SupportDocumentRequirementSchema = yup.object({
+  id: yup.string().default(''),
   name: yup.string().required('Nama wajib diisi'),
   templateDocumentUrl: yup.string().url('Format URL tidak valid').required('File wajib diupload'),
 });
@@ -43,8 +45,12 @@ export const UpdateItemBuildingRequestSchema = yup.object({
   price: yup.number().required('Harga wajib diisi'),
   description: yup.string().default(''), // Make description nullable
   address: AddressSchema,
-  photo: yup.array().of(PhotoSchema).required('Foto wajib diisi'),
+  photo: yup.array().of(PhotoSchema).required('Foto wajib diisi').default([]),
   supportDocumentRequirement: yup.array()
     .of(SupportDocumentRequirementSchema)
     .default([]),
 });
+
+export const DeleteBuildingRequestSchema = yup.object({
+  id: yup.string().required('ID wajib diisi'),
+})
