@@ -180,6 +180,22 @@ const FormRentBuilding = () => {
 					<Typography variant='h6'>Form Peminjaman</Typography>
 
 					<Controller
+						name='eventName'
+						control={control}
+						render={({ field }) => (
+							<Stack>
+								<Typography>Nama Kegiatan</Typography>
+								<TextField
+									{...field}
+									fullWidth
+									helperText={formState.errors.startDate?.message}
+									error={!!formState.errors.startDate}
+								/>
+							</Stack>
+						)}
+					/>
+
+					<Controller
 						name='startDate'
 						control={control}
 						render={({ field }) => (
@@ -306,8 +322,7 @@ const FormRentBuilding = () => {
 
 					<Button
 						type='submit'
-						variant='contained'
-						disabled={!formState.isValid || isPending}>
+						variant='contained'>
 						{isPending ? 'Menyimpan...' : 'Kirim Peminjaman'}
 					</Button>
 				</Stack>
