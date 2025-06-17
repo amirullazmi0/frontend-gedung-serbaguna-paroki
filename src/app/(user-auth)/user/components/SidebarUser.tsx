@@ -34,11 +34,11 @@ export const SidebarItem: {
 		text: 'Dashboard',
 		url: '/user',
 	},
-	{
-		icon: <ArticleOutlinedIcon />,
-		text: 'Report',
-		url: '/user/report',
-	},
+	// {
+	// 	icon: <ArticleOutlinedIcon />,
+	// 	text: 'Report',
+	// 	url: '/user/report',
+	// },
 ];
 
 export default function SidebarUser({ children }: SidebarUserProps) {
@@ -159,6 +159,7 @@ export default function SidebarUser({ children }: SidebarUserProps) {
 					sx={{
 						width: 350,
 						flexShrink: 0,
+						zIndex: 100,
 						bgcolor: colorPallete.white,
 						boxShadow: '0px 0px 20px -5px rgba(0, 0, 0, 0.25)',
 					}}>
