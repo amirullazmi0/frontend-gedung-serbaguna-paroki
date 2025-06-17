@@ -51,7 +51,7 @@ const FormAddBuilding = () => {
 
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.between('xs', 'md'));
-	const isDesktop = useMediaQuery(theme.breakpoints.up('lg')) && !isMobile;
+	const isDesktop = useMediaQuery(theme.breakpoints.up('md')) && !isMobile;
 
 	useEffect(() => {
 		if (isSuccess) {
@@ -74,12 +74,7 @@ const FormAddBuilding = () => {
 		}
 	}, [isSuccess, isErrorPost, errorPost, reset, data]);
 
-	useEffect(() => {
-		console.log('err', errors);
-	}, [errors]);
-
 	const onSubmit = async (data: InferType<typeof AddItemBuildingRequestSchema>) => {
-		console.log('data upload', data);
 		await postBuilding(data);
 	};
 	return (
@@ -310,6 +305,25 @@ const FormAddBuilding = () => {
 									/>
 								)}
 							/>
+							{isMobile && (
+								<Stack
+									padding={2}
+									gap={1}
+									height={'fit-content'}
+									bgcolor={colorPallete['low-grey']}
+									borderRadius={2}>
+									<Typography>Pilih Lokasi Gedung</Typography>
+									<SelectLatLng
+										onChange={e => {
+											console.log('onChange', e);
+											setValue('address.lat', e.lat.toString());
+											setValue('address.lng', e.lng.toString());
+											trigger(['address.lat', 'address.lng']);
+										}}
+									/>
+								</Stack>
+							)}
+
 							<Controller
 								name='address.lat'
 								control={control}
