@@ -18,6 +18,7 @@ type AuthContextType = {
 	user: User | null;
 	authenticated: boolean;
 	logout: () => Promise<void>;
+	checkAuth: () => Promise<void>;
 };
 
 // Membuat context auth untuk aplikasi
@@ -25,6 +26,7 @@ export const authContext = createContext<AuthContextType>({
 	user: null,
 	authenticated: false,
 	logout: async () => {},
+	checkAuth: async () => {},
 });
 
 // Provider untuk AuthContext
@@ -57,5 +59,5 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 		checkAuth();
 	}, []);
 
-	return <authContext.Provider value={{ user, authenticated, logout }}>{children}</authContext.Provider>;
+	return <authContext.Provider value={{ user, authenticated, logout, checkAuth }}>{children}</authContext.Provider>;
 };
