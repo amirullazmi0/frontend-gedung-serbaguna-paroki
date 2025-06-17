@@ -8,6 +8,7 @@ export const supportDocumentRequirementSchema = yup.object({
 
 export const rentBuildingConfigSchema = yup.object({
   buildingId: yup.string().required('ID wajib diisi'),
+  eventName: yup.string().required('Nama kegiatan wajib diisi'),
   startDate: yup
     .mixed<Dayjs>()
     .required('Tanggal mulai wajib diisi')
