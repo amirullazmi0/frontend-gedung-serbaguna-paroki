@@ -8,6 +8,7 @@ export enum RentStatus {
 export interface RentBuildingItemType {
   id: string;
   buildingId: string;
+  eventName: string;
   userId: string;
   status: RentStatus;
   startDate: string; // ISO string
@@ -28,6 +29,11 @@ export interface RentBuildingItemType {
       createdAt: string;
       updatedAt: string;
     }[];
+  };
+
+  user: {
+    name: string;
+    email: string;
   };
 
   supportDocumentRentBuilding: {
