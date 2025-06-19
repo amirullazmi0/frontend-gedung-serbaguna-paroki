@@ -110,8 +110,21 @@ export default function SidebarAdmin({ children }: SidebarAdminProps) {
 			<Divider />
 			<List>
 				<ListItem>
-					<ListItemButton onClick={() => router.push('/user/profile')}>
-						<ListItemIcon>
+					<ListItemButton
+						onClick={() => router.push('/admin/profile')}
+						sx={{
+							borderRadius: 2,
+							backgroundColor: pathname === '/admin/profile' ? colorPallete['low-blue'] : 'transparent',
+							color: pathname === '/admin/profile' ? colorPallete.white : 'inherit',
+							':hover': {
+								backgroundColor: pathname === '/admin/profile' ? colorPallete['low-blue'] : 'inherit',
+								color: pathname === '/admin/profile' ? colorPallete.white : 'inherit',
+							},
+						}}>
+						<ListItemIcon
+							sx={{
+								color: pathname === '/admin/profile' ? colorPallete.white : 'inherit',
+							}}>
 							<PersonOutlineOutlinedIcon />
 						</ListItemIcon>
 						<ListItemText primary='Profil' />
