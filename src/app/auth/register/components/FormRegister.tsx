@@ -31,10 +31,7 @@ const FormRegister = () => {
 		resolver: yupResolver(registerSchema),
 		mode: 'onChange',
 		defaultValues: {
-			name: '',
-			email: '',
-			password: '',
-			confirmPassword: '',
+			role: 'USER',
 		},
 	});
 
@@ -94,47 +91,6 @@ const FormRegister = () => {
 		}
 	}, [isSuccess, isError, error, reset]);
 
-	const CardPilihRole = () => (
-		<Stack
-			sx={{
-				gridColumn: {
-					xs: 'span 1',
-					md: 'span 2',
-				},
-			}}>
-			<Typography
-				variant='h3'
-				sx={{
-					fontWeight: 'bold',
-					color: colorPallete.primary,
-				}}>
-				Pilih Role
-			</Typography>
-			<Stack
-				sx={{
-					gap: 2,
-					display: 'grid',
-					gridTemplateColumns: 'repeat(2, 1fr)',
-					mt: 10,
-				}}>
-				<Button
-					sx={{ textTransform: 'none' }}
-					variant='contained'
-					size='small'
-					onClick={() => navigation.push('/auth/register?role=USER')}>
-					Penyewa
-				</Button>
-				<Button
-					sx={{ textTransform: 'none' }}
-					variant='contained'
-					size='small'
-					onClick={() => navigation.push('/auth/register?role=ADMIN')}>
-					Penyedia Gedung
-				</Button>
-			</Stack>
-		</Stack>
-	);
-
 	return (
 		<Stack
 			component='form'
@@ -161,186 +117,158 @@ const FormRegister = () => {
 				message={alertMessage}
 				timeout={timeout}
 			/>
-			{!role || (role !== 'USER' && role !== 'ADMIN') ? (
-				<CardPilihRole />
-			) : (
-				<>
-					<Typography
-						variant='h3'
-						fontWeight={600}
-						sx={{
-							color: colorPallete.primary,
-							gridColumn: {
-								xs: 'span 1',
-								md: 'span 2',
-							},
-							mb: 5,
-						}}>
-						Register <br />
-						<span style={{ color: colorPallete.black }}>{role === 'USER' ? 'Penyewa' : 'Penyedia Gedung'}</span>
-					</Typography>
+			<Typography
+				variant='h3'
+				fontWeight={600}
+				sx={{
+					color: colorPallete.primary,
+					gridColumn: {
+						xs: 'span 1',
+						md: 'span 2',
+					},
+					mb: 5,
+				}}>
+				Register <br />
+				<span style={{ color: colorPallete.black }}>Penyewa</span>
+			</Typography>
 
-					{/* Name Field */}
-					<Controller
-						name='name'
-						control={control}
-						render={({ field }) => (
-							<TextField
-								{...field}
-								label='name'
-								type='text'
-								error={!!errors.name}
-								helperText={errors.name?.message}
-								fullWidth
-							/>
-						)}
+			{/* Name Field */}
+			<Controller
+				name='name'
+				control={control}
+				render={({ field }) => (
+					<TextField
+						{...field}
+						label='name'
+						type='text'
+						error={!!errors.name}
+						helperText={errors.name?.message}
+						fullWidth
 					/>
+				)}
+			/>
 
-					{/* Email Field */}
-					<Controller
-						name='email'
-						control={control}
-						render={({ field }) => (
-							<TextField
-								{...field}
-								label='Email'
-								type='email'
-								error={!!errors.email}
-								helperText={errors.email?.message}
-								fullWidth
-							/>
-						)}
+			{/* Email Field */}
+			<Controller
+				name='email'
+				control={control}
+				render={({ field }) => (
+					<TextField
+						{...field}
+						label='Email'
+						type='email'
+						error={!!errors.email}
+						helperText={errors.email?.message}
+						fullWidth
 					/>
+				)}
+			/>
 
-					{/* Phone Field */}
-					<Controller
+			{/* Phone Field */}
+			<Controller
+				name='phone'
+				control={control}
+				render={({ field }) => (
+					<PhoneInput
+						field={field}
 						name='phone'
-						control={control}
-						render={({ field }) => (
-							<PhoneInput
-								field={field}
-								name='phone'
-								label='Whatsapp'
-								error={errors.phone?.message}
-							/>
-						)}
+						label='Whatsapp'
+						error={errors.phone?.message}
 					/>
+				)}
+			/>
 
-					{/* Password Field */}
-					<Controller
-						name='password'
-						control={control}
-						render={({ field }) => (
-							<Stack sx={{ gridColumn: { xs: 'span 1', md: 'span 2' }, gap: 1 }}>
-								<TextField
-									{...field}
-									label='Password'
-									type={showPassword ? 'text' : 'password'}
-									error={!!errors.password}
-									fullWidth
-									InputProps={{
-										endAdornment: (
-											<InputAdornment position='end'>
-												<IconButton
-													onClick={toggleShowPassword}
-													edge='end'>
-													{showPassword ? <VisibilityOff /> : <Visibility />}
-												</IconButton>
-											</InputAdornment>
-										),
-									}}
-								/>
-								<PasswordChecklist password={field.value || ''} />
-							</Stack>
-						)}
-					/>
-
-					{/* Confirm Password Field */}
-					<Controller
-						name='confirmPassword'
-						control={control}
-						render={({ field }) => (
-							<Stack sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}>
-								<TextField
-									{...field}
-									label='Konfirmasi Password'
-									type={showConfirmPassword ? 'text' : 'password'}
-									error={!!errors.confirmPassword}
-									helperText={errors.confirmPassword?.message}
-									fullWidth
-									InputProps={{
-										endAdornment: (
-											<InputAdornment position='end'>
-												<IconButton
-													onClick={toggleShowConfirmPassword}
-													edge='end'>
-													{showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-												</IconButton>
-											</InputAdornment>
-										),
-									}}
-								/>
-							</Stack>
-						)}
-					/>
-
-					{/* Hidden role field */}
-					<input
-						type='hidden'
-						{...control.register('role')}
-						value={role}
-					/>
-
-					{/* Buttons */}
-					<Stack
-						flexDirection={'row'}
-						gap={1}>
-						<Button
-							variant='contained'
-							onClick={() => {
-								navigation.push('/auth/register');
-								reset({
-									name: '',
-									email: '',
-									password: '',
-									confirmPassword: '',
-								});
+			{/* Password Field */}
+			<Controller
+				name='password'
+				control={control}
+				render={({ field }) => (
+					<Stack sx={{ gridColumn: { xs: 'span 1', md: 'span 2' }, gap: 1 }}>
+						<TextField
+							{...field}
+							label='Password'
+							type={showPassword ? 'text' : 'password'}
+							error={!!errors.password}
+							fullWidth
+							InputLabelProps={{ shrink: true }}
+							InputProps={{
+								endAdornment: (
+									<InputAdornment position='end'>
+										<IconButton
+											onClick={toggleShowPassword}
+											edge='end'>
+											{showPassword ? <VisibilityOff /> : <Visibility />}
+										</IconButton>
+									</InputAdornment>
+								),
 							}}
-							sx={{
-								gridColumn: { xs: 'span 1', md: 'span 2' },
-								width: 'fit-content',
-							}}>
-							Ubah Role
-						</Button>
-						<Button
-							variant='contained'
-							color='secondary'
-							onClick={() => {
-								const password = generatePassword(14);
-								setShowPassword(true);
-								setShowConfirmPassword(true);
-								setValue('password', password);
-								setValue('confirmPassword', password);
-								trigger(['password', 'confirmPassword']);
-							}}
-							sx={{
-								gridColumn: { xs: 'span 1', md: 'span 2' },
-								width: 'fit-content',
-							}}>
-							Generate Password
-						</Button>
+						/>
+						<PasswordChecklist password={field.value || ''} />
 					</Stack>
+				)}
+			/>
 
-					<Button
-						type='submit'
-						loading={isPending}
-						variant='contained'
-						disabled={!isValid}
-						sx={{ gridColumn: { xs: 'span 1', md: 'span 2' }, mt: 5 }}>
-						Register
-					</Button>
-				</>
-			)}
+			{/* Confirm Password Field */}
+			<Controller
+				name='confirmPassword'
+				control={control}
+				render={({ field }) => (
+					<Stack sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}>
+						<TextField
+							{...field}
+							label='Konfirmasi Password'
+							type={showConfirmPassword ? 'text' : 'password'}
+							error={!!errors.confirmPassword}
+							helperText={errors.confirmPassword?.message}
+							fullWidth
+							InputLabelProps={{ shrink: true }}
+							InputProps={{
+								endAdornment: (
+									<InputAdornment position='end'>
+										<IconButton
+											onClick={toggleShowConfirmPassword}
+											edge='end'>
+											{showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+										</IconButton>
+									</InputAdornment>
+								),
+							}}
+						/>
+					</Stack>
+				)}
+			/>
+
+			{/* Buttons */}
+			<Stack
+				flexDirection={'row'}
+				gap={1}>
+				<Button
+					variant='contained'
+					color='secondary'
+					onClick={() => {
+						const password = generatePassword(14);
+						setShowPassword(true);
+						setShowConfirmPassword(true);
+						setValue('password', password);
+						setValue('confirmPassword', password);
+						trigger(['password', 'confirmPassword']);
+					}}
+					sx={{
+						gridColumn: { xs: 'span 1', md: 'span 2' },
+						width: 'fit-content',
+					}}>
+					Generate Password
+				</Button>
+			</Stack>
+
+			<Button
+				type='submit'
+				loading={isPending}
+				variant='contained'
+				disabled={!isValid}
+				sx={{ gridColumn: { xs: 'span 1', md: 'span 2' }, mt: 5 }}>
+				Register
+			</Button>
 
 			{/* Login Link */}
 			<Stack

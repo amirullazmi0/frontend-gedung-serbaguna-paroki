@@ -8,7 +8,7 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import './leaflet.css';
 import 'leaflet/dist/leaflet.css';
 
-import { Button, Stack } from '@mui/material';
+import { Button, IconButton, Stack } from '@mui/material';
 import { LegendCard } from './map-component/LegendCard';
 import RouteInfoCard from './map-component/RouteInfoCard';
 import DetailModal from './map-component/DetailModal';
@@ -17,7 +17,9 @@ import Image from 'next/image';
 import { BuildingItemType } from '../DTO/building';
 import useQueryApiRequest from '../hook/useQueryApiRequest';
 import { GlobalApiResponse } from '../utils/globalsApiResponse';
-
+import build from 'next/dist/build';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
 L.Icon.Default.mergeOptions({
 	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
 	iconUrl: require('leaflet/dist/images/marker-icon.png'),
@@ -100,7 +102,7 @@ const RoutingMachine = ({
 
 const DashboardMap = () => {
 	const [API_KEY] = useState('YGBPAuY7utv2Y7SgHp2N');
-	const defaultPosition: LatLngExpression = [-0.021549253076259666, 109.3358068951819];
+	const defaultPosition: LatLngExpression = [1.331662502724799, 109.93096005307532];
 	const layer = [
 		{ name: 'Standar', kode: 'https://api.maptiler.com/maps/basic-v2/{z}/{x}/{y}@2x.png?key=' + API_KEY },
 		{ name: 'osm', kode: 'https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=' + API_KEY },
@@ -116,9 +118,12 @@ const DashboardMap = () => {
 	const [openDetailModal, setOpenDetailModal] = useState(false);
 
 	const [detailMarker, setDetailMarker] = useState<BuildingItemType>();
-	const { data } = useQueryApiRequest<GlobalApiResponse<BuildingItemType[]>>({
+	const { data } = useQueryApiRequest<GlobalApiResponse<BuildingItemType>>({
 		key: 'get-building',
 		withAuth: false,
+		params: {
+			id: '663b5114-2e2e-47fc-83b0-97782029d1df',
+		},
 	});
 
 	const updateUserLocation = () => {
@@ -163,7 +168,7 @@ const DashboardMap = () => {
 			<MapContainer
 				className='map'
 				zoomControl={false}
-				center={selectedMarker ? selectedMarker.position : userPosition || defaultPosition}
+				center={defaultPosition}
 				minZoom={6}
 				zoom={13}
 				style={{ height: '100vh' }}>
@@ -182,62 +187,56 @@ const DashboardMap = () => {
 					</Marker>
 				)}
 
-				{data &&
-					data.data &&
-					data.data.map(building => {
-						return (
-							<Marker
-								key={building.id}
-								position={[Number(building.buildingAddress[0].lat), Number(building.buildingAddress[0].lng)]}
-								eventHandlers={{
-									click: () => {
-										setSelectedMarker({
-											position: [Number(building.buildingAddress[0].lat), Number(building.buildingAddress[0].lng)],
-											name: building.name,
-											description: building.description,
-										});
-									},
-								}}>
-								<Popup>
-									<strong>{building.name}</strong>
-									<br />
-									{building.buildingPhoto && building.buildingPhoto.length > 0 && (
-										<div style={{ marginTop: 8, width: '100%', height: 150, position: 'relative' }}>
-											<Image
-												src={building.buildingPhoto[0].url}
-												alt={`${building.name} image 1`}
-												fill
-												style={{ objectFit: 'cover', borderRadius: 8 }}
-												sizes='(max-width: 600px) 100vw, 600px'
-												priority
-											/>
-										</div>
-									)}
-									<Stack
-										direction='row'
-										gap={1}
-										mt={1}>
-										<Button
-											variant='contained'
-											size='small'
-											onClick={() => setDestination([Number(building.buildingAddress[0].lat), Number(building.buildingAddress[0].lng)])}>
-											Tampilkan Rute
-										</Button>
-										<Button
-											variant='contained'
-											color='success'
-											size='small'
-											onClick={() => {
-												setDetailMarker(building);
-												setOpenDetailModal(true);
-											}}>
-											Detail
-										</Button>
-									</Stack>
-								</Popup>
-							</Marker>
-						);
-					})}
+				{data && data.data && (
+					<>
+						<Marker
+							key={data.data.id}
+							position={[Number(data.data.buildingAddress[0].lat), Number(data.data.buildingAddress[0].lng)]}>
+							<Popup>
+								<strong>{data.data.name}</strong>
+								<br />
+								{data.data.buildingPhoto && data.data.buildingPhoto.length > 0 && (
+									<div style={{ marginTop: 8, width: '100%', height: 150, position: 'relative' }}>
+										<Image
+											src={data.data.buildingPhoto[0].url}
+											alt={`${data.data.name} image 1`}
+											fill
+											style={{ objectFit: 'cover', borderRadius: 8 }}
+											sizes='(max-width: 600px) 100vw, 600px'
+											priority
+										/>
+									</div>
+								)}
+								<Stack
+									direction='row'
+									gap={1}
+									mt={1}>
+									{/* <Button
+										variant='contained'
+										size='small'
+										onClick={() => setDestination([Number(data?.data?.buildingAddress[0].lat), Number(data?.data?.buildingAddress[0].lng)])}>
+										Tampilkan Rute
+									</Button> */}
+									<Button
+										variant='contained'
+										color='success'
+										size='small'
+										onClick={() => {
+											setDetailMarker(data.data);
+											setOpenDetailModal(true);
+										}}>
+										Detail
+									</Button>
+									<IconButton
+										target='_blank'
+										href={`https://wa.me/${data.data.user.phone}`}>
+										<WhatsAppIcon />
+									</IconButton>
+								</Stack>
+							</Popup>
+						</Marker>
+					</>
+				)}
 
 				<RoutingMachine
 					from={userPosition}

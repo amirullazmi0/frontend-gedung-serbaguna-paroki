@@ -24,7 +24,7 @@ interface Props {
 }
 
 const SelectLatLng = ({ onChange, lat, lng }: Props) => {
-	const mapRef = useRef(null);
+	const mapRef: any = useRef(null);
 	const [API_KEY] = useState('YGBPAuY7utv2Y7SgHp2N');
 	const layer = [
 		{ name: 'Standar', kode: 'https://api.maptiler.com/maps/basic-v2/{z}/{x}/{y}@2x.png?key=' + API_KEY },
@@ -33,10 +33,14 @@ const SelectLatLng = ({ onChange, lat, lng }: Props) => {
 	];
 
 	const [tile, setTile] = useState(layer[0].kode);
-	const [markerPosition, setMarkerPosition] = useState<LatLngExpression>([-0.021549253076259666, 109.3358068951819]);
+	const [markerPosition, setMarkerPosition] = useState<LatLngExpression>([1.331662502724799, 109.93096005307532]);
 	useEffect(() => {
 		if (lat && lng) {
 			setMarkerPosition([lat, lng]);
+			if (mapRef.current) {
+				const map = mapRef.current;
+				map.setView([lat, lng], 13); // Set the view to the provided lat/lng
+			}
 		}
 	}, [lat, lng]);
 	function OnCLickMap() {

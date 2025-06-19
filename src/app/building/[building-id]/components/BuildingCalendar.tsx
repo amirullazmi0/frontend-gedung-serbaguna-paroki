@@ -15,7 +15,7 @@ import CarouselImages from '@/app/components/Carousel/CarouselImages';
 import { Alert, AlertType } from '@/app/components/Alert/Alert';
 import { authContext } from '@/app/provider/auth-provider/authProvider';
 import { RentBuildingItemType, RentStatus } from '@/app/(user-auth)/user/components/rentBuilding';
-
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 const localizer = dayjsLocalizer(dayjs);
 
 interface CustomEvent extends Event {
@@ -219,6 +219,12 @@ const BuildingCalendar: React.FC = () => {
 						}}>
 						Sewa Gedung
 					</Button>
+					<IconButton
+						color='primary'
+						target='_blank'
+						href={`https://wa.me/${data?.data?.user.phone}`}>
+						<WhatsAppIcon />
+					</IconButton>
 				</Stack>
 			</Stack>
 			<Alert

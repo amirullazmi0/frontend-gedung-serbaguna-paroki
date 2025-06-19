@@ -132,7 +132,9 @@ export default function Navbar(props: Props) {
 					<Typography
 						fontWeight={600}
 						color={colorPallete.primary}>
-						Sewa Gedung
+						Gedung Serba Guna <br />
+						Paroki Santo Mikael <br />
+						Jagoi Babang
 					</Typography>
 				</Stack>
 
@@ -140,11 +142,6 @@ export default function Navbar(props: Props) {
 					direction='row'
 					alignItems='center'
 					gap={1}>
-					<Button
-						variant='contained'
-						onClick={() => router.push('/building')}>
-						List Gedung
-					</Button>
 					<AuthActions
 						authenticated={authenticated}
 						user={user}

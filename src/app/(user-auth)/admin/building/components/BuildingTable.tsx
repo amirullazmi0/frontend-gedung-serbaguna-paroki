@@ -118,11 +118,11 @@ const BuildingTable = () => {
 								onClick={() => router.push(`/admin/building/${row.id}/edit`)}>
 								<EditIcon />
 							</IconButton>
-							<IconButton
+							{/* <IconButton
 								color='error'
 								onClick={() => handleDelete(row.id)}>
 								<DeleteIcon />
-							</IconButton>
+							</IconButton> */}
 						</CardActions>
 					</Card>
 				))}

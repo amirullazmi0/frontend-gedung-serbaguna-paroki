@@ -16,13 +16,6 @@ export default function Home() {
 				minHeight: '100svh',
 				padding: 2,
 			}}>
-			<Stack alignItems={'flex-end'}>
-				<Button
-					variant='contained'
-					onClick={() => navigation.push('/admin/building/add')}>
-					Tambah Gedung
-				</Button>
-			</Stack>
 			<BuildingTable />
 		</Stack>
 	);
