@@ -1,32 +1,51 @@
 'use client';
+import { UserType } from '@/app/DTO/user';
+import useQueryApiRequest from '@/app/hook/useQueryApiRequest';
 import { authContext } from '@/app/provider/auth-provider/authProvider';
 import { colorPallete } from '@/app/utils/colorspallete';
+import { GlobalApiResponse } from '@/app/utils/globalsApiResponse';
 import { Typography } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { useContext } from 'react';
+import ChangePhotoProfile from './components/ChangePhotoProfile';
+import ChangeAddress from './components/ChangeAddress';
+import ChangeProfile from './components/ChangeProfile';
+import ChangeNewPassword from './components/ChangeNewPassword';
 
 export default function Home() {
-	const auth = useContext(authContext);
-	console.log('auth', auth);
+	const {
+		data: userData,
+		isLoading,
+		error,
+	} = useQueryApiRequest<GlobalApiResponse<UserType>>({
+		key: 'get-user-auth',
+		withAuth: true,
+	});
 
 	return (
 		<Stack
+			// justifyContent='center'
+			alignItems='center'
 			sx={{
-				display: 'grid',
-				gridTemplateColumns: {
-					xs: 'repeat(1, 1fr)',
-					md: 'repeat(3, 1fr)',
-				},
 				minHeight: '100svh',
+				width: '100%',
+				bgcolor: colorPallete.white,
+				padding: 2,
 			}}>
-			<Stack sx={{ gridColumn: { xs: 'span 1', md: 'span 2' } }}></Stack>
 			<Stack
 				sx={{
-					bgcolor: colorPallete['low-blue'],
-					padding: 1,
+					width: {
+						xs: '100%',
+						md: '80%',
+						lg: '60%',
+					},
+					height: '100%',
+					gap: 3,
 				}}>
-				<Typography sx={{ color: colorPallete.white }}>{auth.user?.email}</Typography>
-				<Typography sx={{ color: colorPallete.white }}>{auth.user?.role}</Typography>
+				<ChangePhotoProfile user={userData?.data} />
+				<ChangeProfile user={userData?.data} />
+				<ChangeAddress user={userData?.data} />
+				<ChangeNewPassword user={userData?.data} />
 			</Stack>
 		</Stack>
 	);
