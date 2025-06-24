@@ -20,10 +20,13 @@ import { GlobalApiResponse } from '../utils/globalsApiResponse';
 import build from 'next/dist/build';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
-L.Icon.Default.mergeOptions({
-	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-	iconUrl: require('leaflet/dist/images/marker-icon.png'),
-	shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+import leaficon from '@/assets/leaflet-icon.png';
+
+const customIcon = new L.Icon({
+	iconUrl: leaficon.src, // Use the imported image for the icon
+	iconSize: [60, 60], // Adjust the size of the icon
+	iconAnchor: [30, 52], // Anchor point of the icon
+	popupAnchor: [0, -32], // Popup position relative to the marker
 });
 
 const RecenterMap = ({ latlng }: { latlng: LatLngExpression }) => {
@@ -122,7 +125,7 @@ const DashboardMap = () => {
 		key: 'get-building',
 		withAuth: false,
 		params: {
-			id: '8a3ed49a-cedf-4d82-9334-5776aa72806e',
+			id: 'ac74c762-2b61-4343-b829-022b6a2a2ea8',
 		},
 	});
 
@@ -190,6 +193,7 @@ const DashboardMap = () => {
 				{data && data.data && (
 					<>
 						<Marker
+							icon={customIcon}
 							key={data.data.id}
 							position={[Number(data.data.buildingAddress[0].lat), Number(data.data.buildingAddress[0].lng)]}>
 							<Popup>

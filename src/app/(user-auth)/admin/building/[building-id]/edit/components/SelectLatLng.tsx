@@ -6,10 +6,13 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvent, useMapEvents } fro
 import 'leaflet/dist/leaflet.css';
 import './leaflet.css'; // Assuming you have your custom CSS for the map
 
-L.Icon.Default.mergeOptions({
-	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-	iconUrl: require('leaflet/dist/images/marker-icon.png'),
-	shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+import leaficon from '@/assets/leaflet-icon.png';
+
+const customIcon = new L.Icon({
+	iconUrl: leaficon.src, // Use the imported image for the icon
+	iconSize: [60, 60], // Adjust the size of the icon
+	iconAnchor: [30, 52], // Anchor point of the icon
+	popupAnchor: [0, -32], // Popup position relative to the marker
 });
 
 export interface latLngProps {
@@ -39,19 +42,19 @@ const SelectLatLng = ({ onChange, lat, lng }: Props) => {
 			setMarkerPosition([lat, lng]);
 			if (mapRef.current) {
 				const map = mapRef.current;
-				map.setView([lat, lng], 13); // Set the view to the provided lat/lng
+				map.setView([lat, lng]); // Set the view to the provided lat/lng
 			}
 		}
 	}, [lat, lng]);
 	function OnCLickMap() {
 		const map = useMapEvents({
 			click: () => {
-				map.locate();
+				// map.locate();
 			},
 			preclick: e => {
 				console.log('location found:', e.latlng);
 				setMarkerPosition([e.latlng.lat, e.latlng.lng]);
-				map.flyTo(e.latlng, 13);
+				// map.flyTo(e.latlng);
 
 				onChange(e.latlng);
 			},
@@ -64,7 +67,7 @@ const SelectLatLng = ({ onChange, lat, lng }: Props) => {
 			className='map'
 			ref={mapRef}
 			center={markerPosition}
-			minZoom={6}
+			// minZoom={6}
 			zoom={13}
 			zoomControl={false}
 			style={{ height: '100vh' }}>
@@ -75,7 +78,11 @@ const SelectLatLng = ({ onChange, lat, lng }: Props) => {
 			/>
 
 			{/* Add Marker at the clicked position */}
-			<Marker position={markerPosition}>{/* <Popup>Lokasi Kamu</Popup> */}</Marker>
+			<Marker
+				icon={customIcon}
+				position={markerPosition}>
+				{/* <Popup>Lokasi Kamu</Popup> */}
+			</Marker>
 		</MapContainer>
 	);
 };
