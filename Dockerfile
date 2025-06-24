@@ -12,7 +12,6 @@ RUN npm install --legacy-peer-deps
 
 # Salin hasil build dan file terkait dari file tar (Proses ini dilakukan setelah build selesai di GitHub)
 COPY .next/standalone /app/.next/standalone
-COPY .env.staging .env
 COPY package.json /app/package.json
 
 # Expose port 80 untuk CapRover (HTTP)
