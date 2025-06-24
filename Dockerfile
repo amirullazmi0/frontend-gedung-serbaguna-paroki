@@ -3,8 +3,8 @@ LABEL maintainer="DevOps"
 WORKDIR /app
 RUN apk add --no-cache bash
 COPY . .
-RUN yarn install --frozen-lockfile
-RUN yarn build
+RUN npm install --legacy-peer-deps
+RUN npm build
 
 
 FROM node:18-alpine
