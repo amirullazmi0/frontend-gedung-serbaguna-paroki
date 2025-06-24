@@ -5,7 +5,6 @@ const nextConfig: NextConfig = {
   images: {
     domains: ['listingsprod.blob.core.windows.net', 'ik.imagekit.io']
   },
-  output: 'standalone',
   env: {
     API_URL: process.env.NEXT_PUBLIC_API_URL,
     ADMIN_EMAIL: process.env.NEXT_PUBLIC_ADMIN_EMAIL

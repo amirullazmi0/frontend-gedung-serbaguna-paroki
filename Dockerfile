@@ -1,21 +1,26 @@
-# Gunakan image Node.js ringan dari Alpine
-FROM node:18-alpine
+# Gunakan image Node.js resmi (alpine untuk ringan)
+FROM node:20-alpine
 
-# Tentukan direktori kerja di dalam container
+# Install dependencies dasar jika perlu (biasanya tidak wajib untuk Next.js)
+RUN apk add --no-cache bash
+
+# Buat direktori kerja
 WORKDIR /app
 
-# Salin file package.json dan package-lock.json untuk instalasi dependencies
+# Salin package.json dan package-lock.json dulu untuk caching layer install dependencies
 COPY package.json package-lock.json ./
 
-# Install dependencies untuk menjalankan aplikasi (tanpa build karena sudah dilakukan di GitHub)
+# Install dependencies
 RUN npm install --legacy-peer-deps
 
-# Salin hasil build dan file terkait dari file tar (Proses ini dilakukan setelah build selesai di GitHub)
-COPY .next/standalone ./
-COPY package.json /app/package.json
+# Salin seluruh source code
+COPY . .
 
-# Expose port 80 untuk CapRover (HTTP)
-EXPOSE 80
+# Build Next.js app (output di .next)
+RUN npm run build
 
-# Command untuk menjalankan aplikasi Next.js dalam mode standalone
-CMD ["npm", "run" , "start"]
+# Expose port default Next.js
+EXPOSE 3000
+
+# Jalankan Next.js dalam mode production
+CMD ["npm", "start"]
