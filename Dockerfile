@@ -4,7 +4,7 @@ WORKDIR /app
 RUN apk add --no-cache bash
 COPY . .
 RUN npm install --legacy-peer-deps
-RUN npm build
+RUN npm run build
 
 
 FROM node:18-alpine
