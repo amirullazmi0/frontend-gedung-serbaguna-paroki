@@ -1,15 +1,23 @@
-FROM node:18-alpine AS builder
-LABEL maintainer="DevOps"
-WORKDIR /app
+# Gunakan image Node.js resmi (alpine untuk ringan)
+FROM node:20-alpine
+
+# Install dependencies dasar jika perlu (biasanya tidak wajib untuk Next.js)
 RUN apk add --no-cache bash
-COPY . .
-RUN npm install --legacy-peer-deps
-RUN npm build
 
-
-FROM node:18-alpine
+# Buat direktori kerja
 WORKDIR /app
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.env.staging .env
+
+# Salin package.json dan package-lock.json dulu untuk caching layer install dependencies
+COPY package.json package-lock.json ./
+
+# Install dependencies
+RUN npm install --legacy-peer-deps
+
+# Salin seluruh source code
+COPY . .
+
+# Expose port default Next.js
 EXPOSE 3000
-CMD ["node", "server.js"]
+
+# Jalankan Next.js dalam mode production
+CMD ["npm", "start"]
