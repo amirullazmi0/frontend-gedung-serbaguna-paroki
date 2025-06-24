@@ -26,41 +26,44 @@ export const Alert: React.FC<AlertProps> = ({ type, title, message, open, onClos
 
 	// ESC hold-to-close logic
 	useEffect(() => {
-		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.key === 'Escape') {
-				if (!holdRef.current) {
-					holdRef.current = setInterval(() => {
-						setEscHoldTime(prev => {
-							const newTime = prev + 100;
-							if (newTime >= 1000) {
-								onClose();
-								clearInterval(holdRef.current!);
-								holdRef.current = null;
-								return 0;
-							}
-							return newTime;
-						});
-					}, 100);
+		if (typeof window !== 'undefined') {
+			// Your window-dependent code here
+			const handleKeyDown = (e: KeyboardEvent) => {
+				if (e.key === 'Escape') {
+					if (!holdRef.current) {
+						holdRef.current = setInterval(() => {
+							setEscHoldTime(prev => {
+								const newTime = prev + 100;
+								if (newTime >= 1000) {
+									onClose();
+									clearInterval(holdRef.current!);
+									holdRef.current = null;
+									return 0;
+								}
+								return newTime;
+							});
+						}, 100);
+					}
 				}
-			}
-		};
+			};
 
-		const handleKeyUp = (e: KeyboardEvent) => {
-			if (e.key === 'Escape' && holdRef.current) {
-				clearInterval(holdRef.current);
-				holdRef.current = null;
-				setEscHoldTime(0);
-			}
-		};
+			const handleKeyUp = (e: KeyboardEvent) => {
+				if (e.key === 'Escape' && holdRef.current) {
+					clearInterval(holdRef.current);
+					holdRef.current = null;
+					setEscHoldTime(0);
+				}
+			};
 
-		window.addEventListener('keydown', handleKeyDown);
-		window.addEventListener('keyup', handleKeyUp);
+			window.addEventListener('keydown', handleKeyDown);
+			window.addEventListener('keyup', handleKeyUp);
 
-		return () => {
-			window.removeEventListener('keydown', handleKeyDown);
-			window.removeEventListener('keyup', handleKeyUp);
-			if (holdRef.current) clearInterval(holdRef.current);
-		};
+			return () => {
+				window.removeEventListener('keydown', handleKeyDown);
+				window.removeEventListener('keyup', handleKeyUp);
+				if (holdRef.current) clearInterval(holdRef.current);
+			};
+		}
 	}, [onClose]);
 
 	// Timer for open duration (for progress bar)

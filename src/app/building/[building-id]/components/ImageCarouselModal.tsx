@@ -19,7 +19,7 @@ const ImageCarouselModal: React.FC<ImageCarouselModalProps> = ({ open, images, i
 
 	// Keyboard support (left/right arrows)
 	useEffect(() => {
-		if (!open) return;
+		if (!open || typeof window === 'undefined') return; // Ensure this only runs in the client
 
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (e.key === 'ArrowLeft') {

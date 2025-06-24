@@ -5,7 +5,7 @@ import { Stack, TextField, Button, Typography, IconButton, InputAdornment } from
 import { Controller, useForm, set } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { colorPallete } from '@/app/utils/colorspallete';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { InferType } from 'yup';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -36,8 +36,6 @@ const FormRegister = () => {
 	});
 
 	const navigation = useRouter();
-	const searchParams = useSearchParams();
-	const role = searchParams.get('role');
 
 	const [alertShow, setAlertShow] = useState(false);
 	const [alertMessage, setAlertMessage] = useState<React.ReactNode>('');

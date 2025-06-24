@@ -1,8 +1,9 @@
+'use client';
 import { Stack } from '@mui/material';
 import React from 'react';
-import DashboardCalendar from './DashboardCalendar';
-import { colorPallete } from '../utils/colorspallete';
-import DashboardMap from './DashboardMap';
+import dynamic from 'next/dynamic';
+
+const DashboardMap = dynamic(() => import('./DashboardMap'), { ssr: false });
 
 const Section = () => {
 	return (

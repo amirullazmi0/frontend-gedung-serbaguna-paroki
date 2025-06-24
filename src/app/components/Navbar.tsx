@@ -1,5 +1,6 @@
 'use client';
-import React, { useContext, useState } from 'react';
+
+import React, { useContext, useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, CssBaseline, useScrollTrigger, Box, IconButton, Avatar, Menu, MenuItem, Tooltip, Button, Stack, Paper, ClickAwayListener } from '@mui/material';
 import { usePathname, useRouter } from 'next/navigation';
 import { authContext } from '../provider/auth-provider/authProvider';
@@ -77,7 +78,7 @@ export default function Navbar(props: Props) {
 					elevation={4}
 					sx={{
 						position: 'absolute',
-						top: rect.bottom + window.scrollY,
+						top: rect.bottom + (typeof window !== 'undefined' ? window.scrollY : 0),
 						right: 10,
 						zIndex: 1300,
 						minWidth: 160,
@@ -159,7 +160,6 @@ export default function Navbar(props: Props) {
 	}
 
 	// 🔹 AppBar-style Navbar (for /building, etc.)
-
 	if (pathName.startsWith('/building')) {
 		return (
 			<React.Fragment>
@@ -178,7 +178,7 @@ export default function Navbar(props: Props) {
 								gap={1}>
 								<Button
 									variant='contained'
-									onClick={() => router.push('/	')}
+									onClick={() => router.push('/')}
 									sx={{ gap: 1 }}>
 									<FmdGoodOutlinedIcon />
 									Maps
@@ -202,4 +202,6 @@ export default function Navbar(props: Props) {
 			</React.Fragment>
 		);
 	}
+
+	return null;
 }

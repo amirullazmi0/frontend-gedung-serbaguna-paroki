@@ -45,12 +45,15 @@ const BuildingTable = () => {
 	}, [isDeleteSuccess]);
 
 	const handleDelete = async (id: string) => {
-		const confirmation = window.confirm('Apakah anda yakin ingin menghapus data ini?');
-		if (!confirmation) return;
-		try {
-			await deleteBuilding({ id });
-		} catch (error) {
-			console.error('Failed to delete building:', error);
+		if (typeof window !== 'undefined') {
+			// Your window-dependent code here
+			const confirmation = window.confirm('Apakah anda yakin ingin menghapus data ini?');
+			if (!confirmation) return;
+			try {
+				await deleteBuilding({ id });
+			} catch (error) {
+				console.error('Failed to delete building:', error);
+			}
 		}
 	};
 

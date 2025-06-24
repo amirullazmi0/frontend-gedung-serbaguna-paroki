@@ -122,7 +122,7 @@ const DashboardMap = () => {
 		key: 'get-building',
 		withAuth: false,
 		params: {
-			id: '663b5114-2e2e-47fc-83b0-97782029d1df',
+			id: '8a3ed49a-cedf-4d82-9334-5776aa72806e',
 		},
 	});
 
@@ -170,7 +170,7 @@ const DashboardMap = () => {
 				zoomControl={false}
 				center={defaultPosition}
 				minZoom={6}
-				zoom={13}
+				zoom={15}
 				style={{ height: '100vh' }}>
 				<TileLayer
 					url={tile}

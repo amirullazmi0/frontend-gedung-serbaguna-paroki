@@ -40,15 +40,18 @@ const BuildingDetail: React.FC<{ building: BuildingItemType }> = ({ building }) 
 	});
 
 	const handleDelete = async () => {
-		const confirmation = window.confirm('Apakah anda yakin ingin menghapus data ini?');
-		if (!confirmation) return;
+		if (typeof window !== 'undefined') {
+			// Your window-dependent code here
+			const confirmation = window.confirm('Apakah anda yakin ingin menghapus data ini?');
+			if (!confirmation) return;
 
-		try {
-			await deleteBuilding({ id: building.id });
-			window.alert('Building successfully deleted!');
-			router.push('/admin/building');
-		} catch (error) {
-			console.error('Failed to delete building:', error);
+			try {
+				await deleteBuilding({ id: building.id });
+				window.alert('Building successfully deleted!');
+				router.push('/admin/building');
+			} catch (error) {
+				console.error('Failed to delete building:', error);
+			}
 		}
 	};
 

@@ -2,8 +2,6 @@
 
 import { createContext, useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
-import axios from 'axios';
-import { GlobalApiResponse } from '@/app/utils/globalsApiResponse';
 import { useAuth } from '@/app/hook/auth/useAuth';
 import { useRouter } from 'next/navigation';
 
