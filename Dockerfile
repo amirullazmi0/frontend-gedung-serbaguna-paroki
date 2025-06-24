@@ -15,6 +15,8 @@ RUN npm install --legacy-peer-deps
 
 # Salin seluruh source code
 COPY . .
+ENV NEXT_PUBLIC_API_URL=https://rent-building-be.zenika.id
+ENV NEXT_PUBLIC_ADMIN_EMAIL=admin1@gmail.com
 
 # Expose port default Next.js
 EXPOSE 3000
