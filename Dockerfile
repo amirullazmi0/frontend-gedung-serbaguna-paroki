@@ -18,4 +18,4 @@ COPY package.json /app/package.json
 EXPOSE 80
 
 # Command untuk menjalankan aplikasi Next.js dalam mode standalone
-CMD ["node", "server.js"]
+CMD ["npm", "run" , "start"]
