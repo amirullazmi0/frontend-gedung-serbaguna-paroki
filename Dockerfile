@@ -1,34 +1,12 @@
-# Build stage
-FROM node:18-alpine AS builder
-LABEL maintainer="DevOps"
-
-# Set working directory
-WORKDIR /app
-
-# Install bash (needed for some operations)
-RUN apk add --no-cache bash
-
-# Copy all files to the container
-COPY . .
-
-# Install dependencies
-RUN npm install --legacy-peer-deps
-
-# Build the Next.js app
-RUN npm run build
-
-# Production stage
 FROM node:18-alpine
 
-# Set working directory
 WORKDIR /app
 
-# Copy necessary files from the build stage
-COPY --from=builder /app/.next/standalone /app/
-COPY --from=builder /app/.env.staging .env
+COPY .next/ .next/
+COPY package.json package-lock.json ./
 
-# Expose the port that Next.js will run on
+RUN npm install --legacy-peer-deps
+
 EXPOSE 3000
 
-# Command to run the Next.js app
-CMD ["npm", "start"]
+CMD ["npm", "start"]
