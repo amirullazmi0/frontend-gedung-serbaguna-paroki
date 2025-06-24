@@ -122,7 +122,7 @@ const DashboardMap = () => {
 		key: 'get-building',
 		withAuth: false,
 		params: {
-			id: '8a3ed49a-cedf-4d82-9334-5776aa72806e',
+			id: 'ac74c762-2b61-4343-b829-022b6a2a2ea8',
 		},
 	});
 
